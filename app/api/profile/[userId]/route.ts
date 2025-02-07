@@ -11,8 +11,9 @@ export async function GET(request: Request, { params }: { params: { userId: stri
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    // Remove sensitive data if any
-    const { _id, ...safeUser } = user
+    // Create a new object without the _id field
+    const { name, bio, links, socials, profileImage, roles, userId } = user
+    const safeUser = { name, bio, links, socials, profileImage, roles, userId }
 
     return NextResponse.json(safeUser)
   } catch (error) {
