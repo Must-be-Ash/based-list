@@ -1,7 +1,7 @@
 import "./globals.css"
 import { Inter } from "next/font/google"
 import { ClerkProvider } from "@clerk/nextjs"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Toaster } from "sonner"
 import { DockWrapper } from "./components/DockWrapper"
 import { Footer } from "./components/Footer"
@@ -11,6 +11,10 @@ const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
 })
+
+export const viewport: Viewport = {
+  themeColor: "#0052FF",
+}
 
 export const metadata: Metadata = {
   title: "Based List",
@@ -40,7 +44,6 @@ export const metadata: Metadata = {
     ],
   },
   manifest: "/site.webmanifest",
-  themeColor: "#0052FF",
   appleWebApp: {
     title: "Based List",
     statusBarStyle: "default",

@@ -3,14 +3,25 @@ import { connectToDatabase } from "@/lib/mongodb"
 import { normalizeUrl } from "@/lib/utils"
 
 export async function GET(request: Request, { params }: { params: { userId: string } }) {
-  const { db } = await connectToDatabase()
-  const user = await db.collection("profiles").findOne({ userId: params.userId })
+  try {
+    const { db } = await connectToDatabase()
+    const user = await db.collection("profiles").findOne({ userId: params.userId })
 
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 })
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
+
+    // Remove sensitive data if any
+    const { _id, ...safeUser } = user
+
+    return NextResponse.json(safeUser)
+  } catch (error) {
+    console.error('Error fetching profile:', error)
+    return NextResponse.json(
+      { error: "Failed to fetch profile" },
+      { status: 500 }
+    )
   }
-
-  return NextResponse.json(user)
 }
 
 export async function PUT(request: Request, { params }: { params: { userId: string } }) {

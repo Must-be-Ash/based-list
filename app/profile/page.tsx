@@ -55,6 +55,11 @@ const DEFAULT_PROFILE: Profile = {
   roles: []
 }
 
+const getBuilderShareUrl = (userId: string) => {
+  // Use the profile dynamic route instead of builders
+  return `${window.location.origin}/profile/${userId}`;
+};
+
 export default function ProfilePage() {
   const router = useRouter()
   const clerk = useClerk()
@@ -166,6 +171,19 @@ export default function ProfilePage() {
     setProfile({ ...profile, links: newLinks })
   }
 
+  const handleShare = async () => {
+    if (!user) return;
+    
+    try {
+      const shareUrl = getBuilderShareUrl(user.id);
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success('Profile link copied to clipboard!');
+    } catch (error) {
+      console.error('Error sharing:', error);
+      toast.error('Failed to copy link');
+    }
+  };
+
   if (!isLoaded) {
     return (
       <div className="flex justify-center items-center min-h-screen pt-20">
@@ -217,16 +235,7 @@ export default function ProfilePage() {
             {!isEditing && (
               <div className="flex items-center gap-3">
                 <Button
-                  onClick={async () => {
-                    try {
-                      await navigator.clipboard.writeText(window.location.href)
-                      toast.success('Profile link copied to clipboard!')
-                    } catch (error) {
-                      console.error('Error sharing:', error)
-                      await navigator.clipboard.writeText(window.location.href)
-                      toast.success('Profile link copied to clipboard!')
-                    }
-                  }}
+                  onClick={handleShare}
                   className="bg-[#111111] text-white hover:bg-[#0052FF] rounded-full px-6 py-2 flex items-center gap-2"
                 >
                   <Share className="h-4 w-4" />
@@ -625,16 +634,7 @@ export default function ProfilePage() {
             {!isEditing && (
               <>
                 <Button
-                  onClick={async () => {
-                    try {
-                      await navigator.clipboard.writeText(window.location.href)
-                      toast.success('Profile link copied to clipboard!')
-                    } catch (error) {
-                      console.error('Error sharing:', error)
-                      await navigator.clipboard.writeText(window.location.href)
-                      toast.success('Profile link copied to clipboard!')
-                    }
-                  }}
+                  onClick={handleShare}
                   className="bg-[#111111] text-white hover:bg-[#0052FF] rounded-full px-6 py-2 flex items-center justify-center gap-2"
                 >
                   <Share className="h-4 w-4" />

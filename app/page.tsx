@@ -38,9 +38,9 @@ export default function Home() {
         {/* Hero section */}
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center max-w-4xl mx-auto px-4">
-            <h1 className="text-8xl font-bold mb-8 text-[#0052FF] flex items-center justify-center">
+            <h1 className="text-5xl sm:text-8xl font-bold mb-6 sm:mb-8 text-[#0052FF] flex items-center justify-center">
               Based List
-              <div className="relative group ml-6 -mb-2">
+              <div className="relative group ml-6 -mb-2 hidden sm:block">
                 <div className="absolute -inset-2 bg-gradient-to-r from-[#0052FF] to-[#0043CC] rounded-full blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
                 <Image
                   src="/Base_Network_Logo.svg"
@@ -51,30 +51,30 @@ export default function Home() {
                 />
               </div>
             </h1>
-            <h2 className="text-4xl font-semibold mb-12 text-gray-700 dark:text-gray-300">
+            <h2 className="text-2xl sm:text-4xl font-semibold mb-8 sm:mb-12 text-gray-700 dark:text-gray-300">
               A directory of builders on Base
             </h2>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
               <SignedOut>
                 <SignInButton mode="modal">
-                  <Button size="lg" className="bg-[#0052FF] text-white hover:bg-[#0052FF]/90 text-xl px-10 py-8 rounded-2xl flex items-center gap-3 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all">
-                    Get Started <ArrowRight className="w-6 h-6" />
+                  <Button size="lg" className="bg-[#0052FF] text-white hover:bg-[#0052FF]/90 text-lg sm:text-xl px-6 sm:px-10 py-6 sm:py-8 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-3 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all w-full sm:w-auto">
+                    Get Started <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
                   </Button>
                 </SignInButton>
               </SignedOut>
               <SignedIn>
                 <Link href="/profile">
-                  <Button size="lg" className="bg-[#0052FF] text-white hover:bg-[#0052FF]/90 text-xl px-10 py-8 rounded-2xl flex items-center gap-3 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all">
-                    Go to Profile <ArrowRight className="w-6 h-6" />
+                  <Button size="lg" className="bg-[#0052FF] text-white hover:bg-[#0052FF]/90 text-lg sm:text-xl px-6 sm:px-10 py-6 sm:py-8 rounded-xl sm:rounded-2xl flex items-center gap-2 sm:gap-3 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all w-full sm:w-auto">
+                    Go to Profile <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
                   </Button>
                 </Link>
               </SignedIn>
-              <Link href="/builders">
+              <Link href="/builders" className="w-full sm:w-auto">
                 <Button 
                   variant="outline" 
                   size="lg"
-                  className="text-[#0052FF] border-[#0052FF] hover:bg-[#0052FF]/10 text-xl px-10 py-8 rounded-2xl backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all"
+                  className="text-[#0052FF] border-[#0052FF] hover:bg-[#0052FF]/10 text-lg sm:text-xl px-6 sm:px-10 py-6 sm:py-8 rounded-xl sm:rounded-2xl backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all w-full"
                 >
                   Explore Builders
                 </Button>
