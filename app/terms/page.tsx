@@ -41,7 +41,7 @@ export default function TermsOfService() {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">5. Limitation of Liability</h2>
-          <p>Based List is provided "as is" without warranties of any kind. We are not liable for any damages arising from your use of the service.</p>
+          <p>Based List is provided &ldquo;as is&rdquo; without warranties of any kind. We are not liable for any damages arising from your use of the service.</p>
         </section>
 
         <section className="mb-8">
