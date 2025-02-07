@@ -6,7 +6,6 @@ import { Toaster } from "sonner"
 import { DockWrapper } from "./components/DockWrapper"
 import { Footer } from "./components/Footer"
 import { ScrollToTop } from "./components/ScrollToTop"
-import { LegalLinks } from "./components/LegalLinks"
 
 const inter = Inter({
   subsets: ['latin'],
