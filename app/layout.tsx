@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Based List",
     description: "A directory of people building on Base",
-    url: "https://basedlist.xyz",
+    url: "https://basedlist.dev",
     siteName: "Based List",
     images: [
       {
