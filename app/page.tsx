@@ -81,21 +81,7 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="relative z-10 py-6">
-        <div className="container mx-auto px-4 text-center text-gray-600">
-          Built by{" "}
-          <Link 
-            href="https://x.com/navigate_ai" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-[#FF7847] hover:text-[#FF7847]/80 font-semibold"
-          >
-            Navigate
-          </Link>
-          &nbsp;- the data marketplace for AI Agents built on Base
-        </div>
-      </footer>
+
     </div>
   )
 }
