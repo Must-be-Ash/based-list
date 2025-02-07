@@ -84,7 +84,7 @@ export default function Home() {
         </div>
 
         {/* Legal Links */}
-        <div className="relative z-20 mb-10">
+        <div className="relative z-[5] mb-10">
           <LegalLinks />
         </div>
       </main>
