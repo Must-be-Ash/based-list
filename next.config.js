@@ -14,6 +14,22 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.clerk.dev',
       },
+      {
+        protocol: 'https',
+        hostname: 'clerk.basedlist.dev',
+      },
+      {
+        protocol: 'https',
+        hostname: 'basedlist.dev',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.clerk.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.basedlist.dev',
+      }
     ],
   },
   webpack: (config) => {
