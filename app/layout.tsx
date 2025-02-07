@@ -1,6 +1,13 @@
 import "./globals.css"
 import { Inter } from "next/font/google"
-import { ClerkProvider } from "@clerk/nextjs"
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs"
 import type { Metadata, Viewport } from "next"
 import { Toaster } from "sonner"
 import { DockWrapper } from "./components/DockWrapper"
@@ -8,8 +15,8 @@ import { Footer } from "./components/Footer"
 import { ScrollToTop } from "./components/ScrollToTop"
 
 const inter = Inter({
-  subsets: ['latin'],
   variable: '--font-inter',
+  subsets: ['latin'],
 })
 
 export const viewport: Viewport = {
@@ -69,6 +76,15 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${inter.variable} antialiased bg-[#fafafa] text-[#393939] min-h-screen flex flex-col`}>
+          <header className="flex justify-end items-center p-4 gap-4 h-16 fixed top-0 right-0 left-0 z-50 bg-white/80 backdrop-blur-sm">
+            <SignedOut>
+              <SignInButton />
+              <SignUpButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
+          </header>
           <DockWrapper />
           <main className="flex-grow">
             {children}
