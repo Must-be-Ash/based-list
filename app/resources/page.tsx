@@ -81,7 +81,7 @@ export default function ResourcesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-black">
       {/* Hero Section */}
-      <div className="bg-white/80 dark:bg-black/50 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 pt-32 pb-12">
+      <div className="bg-white/80 dark:bg-black/50 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 pt-32 pb-12 relative z-[2]">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center gap-4 mb-6">
@@ -102,12 +102,17 @@ export default function ResourcesPage() {
       </div>
 
       {/* Filters */}
-      <ResourceFilter
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-        onSearch={setSearchQuery}
-      />
+      <div className="sticky top-20 z-[1] border-b border-gray-200 dark:border-gray-800">
+        <div className="absolute inset-x-0 -top-20 h-20 bg-white/80 dark:bg-black/50 backdrop-blur-sm" />
+        <div className="bg-white/80 dark:bg-black/50 backdrop-blur-sm">
+          <ResourceFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            onSearch={setSearchQuery}
+          />
+        </div>
+      </div>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12">

@@ -6,6 +6,7 @@ import { Toaster } from "sonner"
 import { DockWrapper } from "./components/DockWrapper"
 import { Footer } from "./components/Footer"
 import { ScrollToTop } from "./components/ScrollToTop"
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({
   subsets: ['latin'],
@@ -78,6 +79,7 @@ export default function RootLayout({
           <Footer />
           <ScrollToTop />
           <Toaster />
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
