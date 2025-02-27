@@ -32,6 +32,17 @@ export const ROLE_COLORS: Record<Role, string> = {
   [Role.COMMUNITY_MANAGER]: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
 }
 
+export const ROLE_ABBREVIATIONS: Record<Role, string> = {
+  [Role.DEVELOPER]: "Dev",
+  [Role.DESIGNER]: "Design",
+  [Role.PRODUCT_MANAGER]: "PM",
+  [Role.MARKETER]: "Mktg",
+  [Role.INVESTOR]: "VC",
+  [Role.ARTIST]: "Art",
+  [Role.BUSINESS_DEV]: "BizDev",
+  [Role.COMMUNITY_MANAGER]: "CM"
+}
+
 export interface Builder {
   _id: string
   name: string
@@ -41,4 +52,18 @@ export interface Builder {
   socials?: Socials
   userId: string
   roles?: Role[]  // Users can select multiple roles
+}
+
+export interface Project {
+  _id: string
+  name: string
+  description: string
+  logo?: string
+  websiteUrl?: string
+  githubUrl?: string
+  userId: string
+  builderName: string
+  builderImage?: string
+  createdAt: Date
+  updatedAt: Date
 } 

@@ -82,8 +82,40 @@ export default function ProfilePage() {
       if (!user) return
 
       try {
+        // Try to fetch existing profile
         const res = await fetch(`/api/profile/${user.id}`)
-        if (!res.ok) throw new Error('Failed to fetch profile')
+        
+        if (res.status === 404) {
+          // Profile doesn't exist, create default profile
+          const defaultProfile = {
+            ...DEFAULT_PROFILE,
+            name: user.firstName || "",
+            profileImage: user.imageUrl || "",
+            userId: user.id
+          }
+
+          // Create profile using PUT endpoint
+          const createRes = await fetch(`/api/profile/${user.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(defaultProfile)
+          })
+
+          if (!createRes.ok) {
+            throw new Error('Failed to create profile')
+          }
+
+          // Set the default profile in state
+          setProfile(defaultProfile)
+          toast.success('Profile created successfully')
+          return
+        }
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch profile')
+        }
+
+        // Profile exists, set it in state
         const data = await res.json()
         setProfile({
           ...DEFAULT_PROFILE,

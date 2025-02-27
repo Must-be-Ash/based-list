@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/app/components/ui/card"
 import Image from "next/image"
 import { UserCircle } from "lucide-react"
 import { FaDiscord, FaGithub, FaGlobe, FaLinkedin, FaTelegram, FaTwitter } from "react-icons/fa"
-import { Builder, ROLE_COLORS } from "@/app/types"
+import { Builder, ROLE_COLORS, ROLE_ABBREVIATIONS } from "@/app/types"
 
 export function BuilderCard({ builder }: { builder: Builder }) {
   // Ensure links array exists and has the required structure
@@ -42,17 +42,26 @@ export function BuilderCard({ builder }: { builder: Builder }) {
             <h2 className="text-xl font-semibold truncate">{builder.name || "Anonymous Builder"}</h2>
             {builder.roles && builder.roles.length > 0 && (
               <div className="flex flex-wrap gap-1.5 my-1">
-                {builder.roles.map((role) => (
+                {builder.roles.slice(0, 3).map((role) => (
                   <span
                     key={role}
                     className={`px-2 py-0.5 rounded-full text-xs font-medium ${ROLE_COLORS[role]}`}
+                    title={role}
                   >
-                    {role}
+                    {ROLE_ABBREVIATIONS[role]}
                   </span>
                 ))}
+                {builder.roles.length > 3 && (
+                  <span
+                    className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+                    title={builder.roles.slice(3).join(", ")}
+                  >
+                    +{builder.roles.length - 3}
+                  </span>
+                )}
               </div>
             )}
-            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
               {builder.bio || "No bio yet"}
             </p>
           </div>
@@ -85,20 +94,20 @@ export function BuilderCard({ builder }: { builder: Builder }) {
 
           {/* Social Links */}
           {Object.values(socials).some(value => value) && (
-            <div className="flex justify-center gap-9 mb-2">
+            <div className="flex justify-center gap-4 mb-2">
               {telegram && (
                 <a
                   href={telegram.startsWith('http') ? telegram : `https://t.me/${telegram.replace('@', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-[#0052FF]/10 dark:hover:bg-[#0052FF]/20 transition-all text-gray-600 hover:text-[#0052FF] dark:text-gray-400"
+                  className="p-2 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-[#0052FF]/10 dark:hover:bg-[#0052FF]/20 transition-all text-gray-600 hover:text-[#0052FF] dark:text-gray-400"
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
                     window.open(telegram.startsWith('http') ? telegram : `https://t.me/${telegram.replace('@', '')}`, '_blank')
                   }}
                 >
-                  <FaTelegram className="w-6 h-6" />
+                  <FaTelegram className="w-5 h-5" />
                 </a>
               )}
               {discord && (
@@ -106,14 +115,14 @@ export function BuilderCard({ builder }: { builder: Builder }) {
                   href={discord.startsWith('http') ? discord : `discord://-/users/${discord}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-[#0052FF]/10 dark:hover:bg-[#0052FF]/20 transition-all text-gray-600 hover:text-[#0052FF] dark:text-gray-400"
+                  className="p-2 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-[#0052FF]/10 dark:hover:bg-[#0052FF]/20 transition-all text-gray-600 hover:text-[#0052FF] dark:text-gray-400"
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
                     window.open(discord.startsWith('http') ? discord : `discord://-/users/${discord}`, '_blank')
                   }}
                 >
-                  <FaDiscord className="w-6 h-6" />
+                  <FaDiscord className="w-5 h-5" />
                 </a>
               )}
               {twitter && (
@@ -121,14 +130,14 @@ export function BuilderCard({ builder }: { builder: Builder }) {
                   href={twitter.startsWith('http') ? twitter : `https://twitter.com/${twitter.replace('@', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-[#0052FF]/10 dark:hover:bg-[#0052FF]/20 transition-all text-gray-600 hover:text-[#0052FF] dark:text-gray-400"
+                  className="p-2 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-[#0052FF]/10 dark:hover:bg-[#0052FF]/20 transition-all text-gray-600 hover:text-[#0052FF] dark:text-gray-400"
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
                     window.open(twitter.startsWith('http') ? twitter : `https://twitter.com/${twitter.replace('@', '')}`, '_blank')
                   }}
                 >
-                  <FaTwitter className="w-6 h-6" />
+                  <FaTwitter className="w-5 h-5" />
                 </a>
               )}
               {linkedin && (
@@ -136,14 +145,14 @@ export function BuilderCard({ builder }: { builder: Builder }) {
                   href={linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-[#0052FF]/10 dark:hover:bg-[#0052FF]/20 transition-all text-gray-600 hover:text-[#0052FF] dark:text-gray-400"
+                  className="p-2 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-[#0052FF]/10 dark:hover:bg-[#0052FF]/20 transition-all text-gray-600 hover:text-[#0052FF] dark:text-gray-400"
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
                     window.open(linkedin, '_blank')
                   }}
                 >
-                  <FaLinkedin className="w-6 h-6" />
+                  <FaLinkedin className="w-5 h-5" />
                 </a>
               )}
             </div>
