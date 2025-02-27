@@ -40,8 +40,8 @@ export default function BuildersPage() {
   })
 
   return (
-    <div className="min-h-screen pt-32 pb-36 sm:pb-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-black">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen pt-32 pb-32 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-black">
+      <div className="container mx-auto px-4 mb-20">
         {/* Search and Filter Section */}
         <div className="mb-12 space-y-6">
           {/* Search Bar */}
