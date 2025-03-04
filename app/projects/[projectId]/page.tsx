@@ -6,7 +6,7 @@ import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { FaGlobe, FaGithub } from 'react-icons/fa'
 import { currentUser } from '@clerk/nextjs/server'
-import { Edit, Trash2 } from 'lucide-react'
+import { Edit } from 'lucide-react'
 import type { Project } from '@/app/types'
 
 async function getProject(projectId: string): Promise<Project | null> {
