@@ -1,47 +1,57 @@
-import { NextResponse, NextRequest } from "next/server"
-import { put } from "@vercel/blob"
-import { getAuth } from "@clerk/nextjs/server"
+import { NextResponse } from 'next/server'
+import { put } from '@vercel/blob'
+import { currentUser } from '@clerk/nextjs/server'
+import { nanoid } from 'nanoid'
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(request: Request) {
   try {
-    const { userId } = getAuth(request)
-    
-    if (!userId) {
+    // Check authentication
+    const user = await currentUser()
+    if (!user) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    const form = await request.formData()
-    const file = form.get("file") as File
+    // Get the form data
+    const formData = await request.formData()
+    const file = formData.get('file') as File
     
     if (!file) {
       return NextResponse.json(
-        { error: "No file provided" },
+        { error: 'No file provided' },
         { status: 400 }
       )
     }
 
-    // Only allow images
-    if (!file.type.startsWith("image/")) {
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
       return NextResponse.json(
-        { error: "File must be an image" },
+        { error: 'Only image files are allowed' },
         { status: 400 }
       )
     }
 
+    // Generate a unique filename
+    const fileExtension = file.name.split('.').pop()
+    const fileName = `${nanoid()}.${fileExtension}`
+    
+    // Log token for debugging (will be removed in production)
+    console.log('Using Blob token:', process.env.NEXT_PUBLIC_VERCEL_BLOB_RW_TOKEN ? 'Token exists' : 'Token missing')
+    
     // Upload to Vercel Blob
-    const blob = await put(file.name, file, {
+    const blob = await put(`projects/${fileName}`, file, {
       access: 'public',
-      token: process.env.NEXT_PUBLIC_VERCEL_BLOB_RW_TOKEN!
+      contentType: file.type,
+      token: process.env.NEXT_PUBLIC_VERCEL_BLOB_RW_TOKEN
     })
 
     return NextResponse.json(blob)
   } catch (error) {
     console.error('Error uploading file:', error)
     return NextResponse.json(
-      { error: "Error uploading file" },
+      { error: 'Failed to upload file' },
       { status: 500 }
     )
   }

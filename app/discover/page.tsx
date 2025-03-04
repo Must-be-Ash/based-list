@@ -1,52 +1,68 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { Button } from '../components/ui/button'
-import { Dialog } from '../components/ui/dialog'
+import Link from 'next/link'
 import { DiscoverProjectCard } from '../components/DiscoverProjectCard'
-import { ProjectSubmissionForm } from '../components/ProjectSubmissionForm'
+import { PlusCircle } from 'lucide-react'
 import type { Project } from '../types'
 
 export default function DiscoverPage() {
   const { userId } = useAuth()
-  const [isSubmitOpen, setIsSubmitOpen] = useState(false)
   const [projects, setProjects] = useState<Project[]>([])
 
   // Fetch projects when the component mounts
-  useState(() => {
+  useEffect(() => {
     fetch('/api/projects')
       .then((res) => res.json())
       .then((data) => setProjects(data))
       .catch((error) => console.error('Error fetching projects:', error))
-  })
+  }, [])
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-8 pt-20">
         <h1 className="text-3xl font-bold">Discover Projects</h1>
         {userId && (
-          <Button onClick={() => setIsSubmitOpen(true)}>
-            Submit Your Project
+          <Button 
+            asChild 
+            size="lg"
+            className="bg-[#0052FF] hover:bg-[#0052FF]/90 text-white font-medium rounded-xl shadow-md transition-all hover:shadow-lg flex items-center gap-2 relative z-[60]"
+          >
+            <Link href="/discover/submit">
+              <PlusCircle className="w-5 h-5" />
+              Submit Your Project
+            </Link>
           </Button>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map((project) => (
-          <DiscoverProjectCard key={project._id} project={project} />
-        ))}
-      </div>
-
-      <Dialog open={isSubmitOpen} onOpenChange={setIsSubmitOpen}>
-        <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center">
-          <div className="bg-white dark:bg-zinc-900 p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-4">Submit Your Project</h2>
-            <ProjectSubmissionForm />
-          </div>
+      {projects.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            No projects have been submitted yet. Be the first to share your project!
+          </p>
+          {userId && (
+            <Button 
+              asChild 
+              size="lg"
+              className="bg-[#0052FF] hover:bg-[#0052FF]/90 text-white font-medium rounded-xl shadow-md transition-all hover:shadow-lg flex items-center gap-2 relative z-[60]"
+            >
+              <Link href="/discover/submit">
+                <PlusCircle className="w-5 h-5" />
+                Submit a Project
+              </Link>
+            </Button>
+          )}
         </div>
-      </Dialog>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((project) => (
+            <DiscoverProjectCard key={project._id} project={project} />
+          ))}
+        </div>
+      )}
     </div>
   )
 } 

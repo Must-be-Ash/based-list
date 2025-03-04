@@ -37,24 +37,44 @@ export async function POST(req: Request) {
     const client = await clientPromise
     const db = client.db('based-list')
     
-    // Get user info from builders collection
-    const builder = await db
-      .collection('builders')
+    // Get user info from profiles collection
+    let profile = await db
+      .collection('profiles')
       .findOne({ userId: user.id })
 
-    if (!builder) {
-      return NextResponse.json(
-        { error: 'Builder profile not found' },
-        { status: 404 }
-      )
+    // If profile doesn't exist, create a default one
+    if (!profile) {
+      const defaultProfile = {
+        name: user.firstName && user.lastName 
+          ? `${user.firstName} ${user.lastName}` 
+          : user.firstName || user.username || 'Anonymous',
+        bio: '',
+        profileImage: user.imageUrl,
+        links: [],
+        userId: user.id,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+      
+      // Insert the default profile
+      const result = await db
+        .collection('profiles')
+        .insertOne(defaultProfile)
+      
+      profile = {
+        ...defaultProfile,
+        _id: result.insertedId
+      }
+      
+      console.log('Created default profile for user:', user.id)
     }
 
     const data = await req.json()
     const projectData = {
       ...data,
       userId: user.id,
-      builderName: builder.name,
-      builderImage: builder.profileImage,
+      builderName: profile.name,
+      builderImage: profile.profileImage,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
