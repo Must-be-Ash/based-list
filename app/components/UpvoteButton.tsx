@@ -5,6 +5,7 @@ import { useAuth, SignInButton } from '@clerk/nextjs'
 import { Button } from './ui/button'
 import { toast } from 'sonner'
 import { GiGoat } from 'react-icons/gi'
+import { LoadingSpinner } from './ui/loading-spinner'
 
 interface UpvoteButtonProps {
   projectId: string
@@ -119,10 +120,16 @@ export function UpvoteButton({
       onClick={handleUpvote}
       disabled={isLoading}
     >
-      <GiGoat 
-        className={`w-5 h-5 ${upvoted ? 'text-blue-600 dark:text-blue-400' : ''} ${upvoted ? 'scale-110 transition-transform' : ''}`} 
-      />
-      {upvoteCount}
+      {isLoading ? (
+        <LoadingSpinner size="sm" />
+      ) : (
+        <>
+          <GiGoat 
+            className={`w-5 h-5 ${upvoted ? 'text-blue-600 dark:text-blue-400' : ''} ${upvoted ? 'scale-110 transition-transform' : ''}`} 
+          />
+          {upvoteCount}
+        </>
+      )}
     </Button>
   )
 } 

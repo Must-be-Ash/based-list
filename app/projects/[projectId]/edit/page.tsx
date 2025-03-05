@@ -6,6 +6,7 @@ import { useAuth } from '@clerk/nextjs'
 import { ProjectEditForm } from '@/app/components/ProjectEditForm'
 import { toast } from 'sonner'
 import type { Project } from '@/app/types'
+import { LoadingScreen } from '@/app/components/ui/loading-spinner'
 
 export default function EditProjectPage({ params }: { params: { projectId: string } }) {
   const router = useRouter()
@@ -63,11 +64,7 @@ export default function EditProjectPage({ params }: { params: { projectId: strin
   
   // Show loading state
   if (!isLoaded || isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        Loading...
-      </div>
-    )
+    return <LoadingScreen />
   }
   
   // Show error if project not found or user not authorized

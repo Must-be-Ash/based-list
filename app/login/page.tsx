@@ -5,8 +5,10 @@ import { motion } from "framer-motion"
 import { LogIn } from "lucide-react"
 import { Button } from "@/app/components/ui/button"
 import { useSearchParams, useRouter } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
+import { useUser, SignIn } from "@clerk/nextjs"
 import { useEffect, Suspense } from "react"
+import { redirect } from "next/navigation"
+import { LoadingScreen } from "@/app/components/ui/loading-spinner"
 
 function LoginPageContent() {
   const searchParams = useSearchParams()
@@ -67,11 +69,7 @@ function LoginPageContent() {
 }
 
 function LoadingState() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-black">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0052FF]"></div>
-    </div>
-  )
+  return <LoadingScreen />
 }
 
 export default function LoginPage() {

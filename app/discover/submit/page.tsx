@@ -5,6 +5,7 @@ import { useAuth, SignInButton } from '@clerk/nextjs'
 import { ProjectSubmissionForm } from '@/app/components/ProjectSubmissionForm'
 import { Button } from '@/app/components/ui/button'
 import type { Project } from '@/app/types'
+import { LoadingScreen } from '@/app/components/ui/loading-spinner'
 
 export default function SubmitProjectPage() {
   const router = useRouter()
@@ -18,7 +19,7 @@ export default function SubmitProjectPage() {
   
   // Show loading state while Clerk is initializing
   if (!isLoaded) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>
+    return <LoadingScreen />
   }
   
   return (

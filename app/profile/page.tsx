@@ -13,6 +13,7 @@ import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { FaDiscord, FaLinkedin, FaTelegram, FaTwitter, FaGithub, FaGlobe } from "react-icons/fa"
 import { Role, ROLE_COLORS } from "@/app/types"
+import { LoadingSpinner, LoadingScreen } from '../components/ui/loading-spinner'
 
 interface Link {
   name: string
@@ -217,11 +218,7 @@ export default function ProfilePage() {
   };
 
   if (!isLoaded) {
-    return (
-      <div className="flex justify-center items-center min-h-screen pt-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0052FF]"></div>
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   if (!isSignedIn) {
@@ -307,7 +304,7 @@ export default function ProfilePage() {
                           onClick={() => fileInputRef.current?.click()}
                         >
                           {isUploading ? (
-                            <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent" />
+                            <LoadingSpinner size="sm" className="text-white" />
                           ) : (
                             <Upload className="h-6 w-6 text-white" />
                           )}
@@ -534,8 +531,8 @@ export default function ProfilePage() {
                         >
                           {isLoading ? (
                             <div className="flex items-center gap-2">
-                              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                              Saving...
+                              <LoadingSpinner size="sm" className="text-white" />
+                              <span>Saving...</span>
                             </div>
                           ) : (
                             'Save Changes'

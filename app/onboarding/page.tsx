@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
 import { useEffect } from "react"
+import { LoadingScreen } from "@/app/components/ui/loading-spinner"
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -16,12 +17,5 @@ export default function OnboardingPage() {
     }
   }, [isLoaded, isSignedIn, router])
 
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-2xl font-semibold mb-4">Setting up your profile...</h1>
-        <p className="text-gray-600">Please wait while we get everything ready.</p>
-      </div>
-    </div>
-  )
+  return <LoadingScreen />
 } 
