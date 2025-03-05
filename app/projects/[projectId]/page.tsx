@@ -11,6 +11,7 @@ import { UpvoteButton } from '@/app/components/UpvoteButton'
 import type { Project } from '@/app/types'
 import { PROJECT_TYPE_COLORS } from '@/app/types'
 import { ProjectType } from '@/app/types'
+import { ShareProjectButton } from '@/app/components/ShareProjectButton'
 
 // Define abbreviations for project types to save space
 const PROJECT_TYPE_ABBREVIATIONS: Record<ProjectType, string> = {
@@ -107,6 +108,11 @@ export default async function ProjectPage({ params }: { params: { projectId: str
                       initialUpvoted={hasUpvoted}
                       size="default"
                       className="rounded-xl shadow-sm hover:shadow hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all"
+                    />
+                    
+                    <ShareProjectButton 
+                      projectId={project._id}
+                      className="rounded-xl shadow-sm hover:shadow hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all"
                     />
                     
                     {isOwner && (

@@ -91,7 +91,11 @@ export function DiscoverProjectCard({ project }: DiscoverProjectCardProps) {
       </Link>
       
       <div className="px-6 pb-6 pt-3 flex items-center justify-between border-t border-gray-100 dark:border-gray-800 mt-auto">
-        <div className="flex items-center gap-2">
+        <Link 
+          href={`/profile/${project.userId}`}
+          className="flex items-center gap-2 group/creator hover:opacity-80 transition-opacity"
+          onClick={(e) => e.stopPropagation()}
+        >
           {project.builderImage ? (
             <div className="relative w-6 h-6 rounded-full overflow-hidden">
               <Image
@@ -107,9 +111,9 @@ export function DiscoverProjectCard({ project }: DiscoverProjectCardProps) {
             </div>
           )}
           <span className="text-sm text-gray-600 dark:text-gray-300">
-            by <span className="font-medium">{project.builderName}</span>
+            by <span className="font-medium group-hover/creator:text-blue-500 transition-colors">{project.builderName}</span>
           </span>
-        </div>
+        </Link>
         
         <div className="flex items-center gap-3">
           <div onClick={handleActionClick}>
