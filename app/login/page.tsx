@@ -5,9 +5,8 @@ import { motion } from "framer-motion"
 import { LogIn } from "lucide-react"
 import { Button } from "@/app/components/ui/button"
 import { useSearchParams, useRouter } from "next/navigation"
-import { useUser, SignIn } from "@clerk/nextjs"
+import { useUser } from "@clerk/nextjs"
 import { useEffect, Suspense } from "react"
-import { redirect } from "next/navigation"
 import { LoadingScreen } from "@/app/components/ui/loading-spinner"
 
 function LoginPageContent() {
