@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useUser, SignInButton, useClerk } from "@clerk/nextjs"
-import { Input } from "@/app/components/ui/input"
-import { Textarea } from "@/app/components/ui/textarea"
-import { Button } from "@/app/components/ui/button"
-import { Card, CardContent } from "@/app/components/ui/card"
+import { Input } from "../components/ui/input"
+import { Textarea } from "../components/ui/textarea"
+import { Button } from "../components/ui/button"
+import { Card, CardContent } from "../components/ui/card"
+import { CardHeader, CardTitle, CardDescription } from '../components/ui/card'
 import { Pencil, LogIn, LogOut, Plus, Trash2, Upload, Check, X, Share } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -14,6 +15,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { FaDiscord, FaLinkedin, FaTelegram, FaTwitter, FaGithub, FaGlobe } from "react-icons/fa"
 import { Role, ROLE_COLORS } from "@/app/types"
 import { LoadingSpinner, LoadingScreen } from '../components/ui/loading-spinner'
+import { DiscoverProjectCard } from '../components/DiscoverProjectCard'
+import type { Project } from '../types'
 
 interface Link {
   name: string
@@ -70,6 +73,8 @@ export default function ProfilePage() {
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE)
+  const [projects, setProjects] = useState<Project[]>([])
+  const [isLoadingProjects, setIsLoadingProjects] = useState(false)
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -98,41 +103,47 @@ export default function ProfilePage() {
           // Create profile using PUT endpoint
           const createRes = await fetch(`/api/profile/${user.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(defaultProfile)
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(defaultProfile),
           })
 
-          if (!createRes.ok) {
-            throw new Error('Failed to create profile')
+          if (createRes.ok) {
+            const newProfile = await createRes.json()
+            setProfile(newProfile)
+          } else {
+            console.error('Failed to create profile')
           }
-
-          // Set the default profile in state
-          setProfile(defaultProfile)
-          toast.success('Profile created successfully')
-          return
+        } else if (res.ok) {
+          const existingProfile = await res.json()
+          setProfile(existingProfile)
         }
 
-        if (!res.ok) {
-          throw new Error('Failed to fetch profile')
-        }
-
-        // Profile exists, set it in state
-        const data = await res.json()
-        setProfile({
-          ...DEFAULT_PROFILE,
-          ...data,
-          name: data?.name || user.firstName || "",
-          profileImage: data?.profileImage || user.imageUrl || "",
-          links: data?.links || DEFAULT_LINKS,
-          socials: {
-            ...DEFAULT_PROFILE.socials,
-            ...data?.socials
-          },
-          roles: data?.roles || []
-        })
+        // Fetch user's projects
+        await fetchUserProjects()
       } catch (error) {
         console.error('Error fetching profile:', error)
-        toast.error('Failed to load profile')
+      }
+    }
+
+    // Function to fetch user's projects
+    async function fetchUserProjects() {
+      if (!user) return
+      
+      try {
+        setIsLoadingProjects(true)
+        const res = await fetch(`/api/projects?userId=${user.id}`)
+        
+        if (res.ok) {
+          const projectsData = await res.json()
+          setProjects(projectsData)
+        }
+      } catch (error) {
+        console.error('Error fetching user projects:', error)
+        toast.error('Failed to load your projects')
+      } finally {
+        setIsLoadingProjects(false)
       }
     }
 
@@ -244,44 +255,15 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-black py-12 px-4 sm:px-6 lg:px-8 sm:pt-12 pt-24 sm:pb-12 pb-32">
+    <div className="min-h-screen flex items-center bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-black py-12 px-4 sm:px-6 lg:px-8 sm:pt-28 pt-24 sm:pb-20 pb-32">
       <div className="max-w-4xl w-full mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          className="space-y-6"
         >
-          {/* Action Buttons - Desktop above, Mobile below */}
-          <div className="hidden sm:flex justify-between items-center gap-3 mb-6">
-            <Button
-              onClick={handleLogout}
-              variant="ghost"
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full px-6 py-2 flex items-center gap-2"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </Button>
-
-            {!isEditing && (
-              <div className="flex items-center gap-3">
-                <Button
-                  onClick={handleShare}
-                  className="bg-[#111111] text-white hover:bg-[#0052FF] rounded-full px-6 py-2 flex items-center gap-2"
-                >
-                  <Share className="h-4 w-4" />
-                  Share
-                </Button>
-                <Button
-                  onClick={() => setIsEditing(true)}
-                  className="bg-[#111111] text-white hover:bg-[#0052FF] rounded-full px-6 py-2 flex items-center gap-2"
-                >
-                  <Pencil className="h-4 w-4" />
-                  Edit Profile
-                </Button>
-              </div>
-            )}
-          </div>
-
-          <Card className="backdrop-blur-lg bg-white/80 dark:bg-black/50 shadow-xl rounded-2xl overflow-hidden border-0">
+          {/* Profile Card */}
+          <Card className="overflow-hidden bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl">
             <CardContent className="p-8">
               <div className="space-y-8">
                 {/* Profile Header */}
@@ -657,6 +639,37 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* User's Projects Section */}
+          {projects.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card className="overflow-hidden bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-800 rounded-xl">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold">Your Projects</CardTitle>
+                  <CardDescription>
+                    Projects you&apos;ve submitted to Based List
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {projects.map(project => (
+                      <DiscoverProjectCard key={project._id} project={project} />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
+          {isLoadingProjects && (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0052FF]"></div>
+            </div>
+          )}
 
           {/* Action Buttons - Mobile only */}
           <div className="sm:hidden flex flex-col gap-3 mt-12">

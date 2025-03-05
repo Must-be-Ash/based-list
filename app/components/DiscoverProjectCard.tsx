@@ -6,6 +6,32 @@ import { Card } from './ui/card'
 import { ExternalLink, Github } from 'lucide-react'
 import { UpvoteButton } from './UpvoteButton'
 import type { Project } from '../types'
+import { ProjectType, PROJECT_TYPE_COLORS } from '../types'
+
+// Define abbreviations for project types to save space
+const PROJECT_TYPE_ABBREVIATIONS: Record<ProjectType, string> = {
+  [ProjectType.AI]: "AI",
+  [ProjectType.DEFI]: "DeFi",
+  [ProjectType.DESCI]: "DeSci",
+  [ProjectType.NFT]: "NFT",
+  [ProjectType.DAO]: "DAOs",
+  [ProjectType.DEX]: "DEX",
+  [ProjectType.ANALYTICS]: "Analytics",
+  [ProjectType.SECURITY]: "Security",
+  [ProjectType.WALLETS]: "Wallets",
+  [ProjectType.INFRA]: "Infra",
+  [ProjectType.SDK_API]: "SDKs",
+  [ProjectType.GAMING]: "Gaming",
+  [ProjectType.IDENTITY]: "Identity",
+  [ProjectType.STABLECOINS]: "Stables",
+  [ProjectType.PREDICTION]: "Prediction",
+  [ProjectType.STORAGE]: "Storage",
+  [ProjectType.MARKETPLACE]: "Marketplace",
+  [ProjectType.GRANTS]: "Grants",
+  [ProjectType.SOCIALFI]: "SocialFi",
+  [ProjectType.ZK]: "ZK",
+  [ProjectType.DATA]: "Data"
+};
 
 interface DiscoverProjectCardProps {
   project: Project
@@ -38,6 +64,28 @@ export function DiscoverProjectCard({ project }: DiscoverProjectCardProps) {
           <div className="flex-1">
             <h3 className="font-semibold text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{project.name}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">{project.description}</p>
+            
+            {project.projectTypes && project.projectTypes.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {project.projectTypes.slice(0, 3).map((type) => (
+                  <span 
+                    key={type} 
+                    className={`text-xs px-2 py-0.5 rounded-full ${PROJECT_TYPE_COLORS[type]}`}
+                    title={type}
+                  >
+                    {PROJECT_TYPE_ABBREVIATIONS[type]}
+                  </span>
+                ))}
+                {project.projectTypes.length > 3 && (
+                  <span 
+                    className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
+                    title={project.projectTypes.slice(3).join(", ")}
+                  >
+                    +{project.projectTypes.length - 3}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </Link>

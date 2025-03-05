@@ -85,6 +85,7 @@ export async function PUT(
       logo: data.logo,
       websiteUrl: data.websiteUrl,
       githubUrl: data.githubUrl,
+      projectTypes: data.projectTypes,
       updatedAt: new Date(),
     }
     

@@ -9,6 +9,33 @@ import { currentUser } from '@clerk/nextjs/server'
 import { Edit } from 'lucide-react'
 import { UpvoteButton } from '@/app/components/UpvoteButton'
 import type { Project } from '@/app/types'
+import { PROJECT_TYPE_COLORS } from '@/app/types'
+import { ProjectType } from '@/app/types'
+
+// Define abbreviations for project types to save space
+const PROJECT_TYPE_ABBREVIATIONS: Record<ProjectType, string> = {
+  [ProjectType.AI]: "AI",
+  [ProjectType.DEFI]: "DeFi",
+  [ProjectType.DESCI]: "DeSci",
+  [ProjectType.NFT]: "NFT",
+  [ProjectType.DAO]: "DAOs",
+  [ProjectType.DEX]: "DEX",
+  [ProjectType.ANALYTICS]: "Analytics",
+  [ProjectType.SECURITY]: "Security",
+  [ProjectType.WALLETS]: "Wallets",
+  [ProjectType.INFRA]: "Infra",
+  [ProjectType.SDK_API]: "SDKs",
+  [ProjectType.GAMING]: "Gaming",
+  [ProjectType.IDENTITY]: "Identity",
+  [ProjectType.STABLECOINS]: "Stables",
+  [ProjectType.PREDICTION]: "Prediction",
+  [ProjectType.STORAGE]: "Storage",
+  [ProjectType.MARKETPLACE]: "Market",
+  [ProjectType.GRANTS]: "Grants",
+  [ProjectType.SOCIALFI]: "SocialFi",
+  [ProjectType.ZK]: "ZK",
+  [ProjectType.DATA]: "Data"
+};
 
 async function getProject(projectId: string): Promise<Project | null> {
   try {
@@ -93,9 +120,23 @@ export default async function ProjectPage({ params }: { params: { projectId: str
                   </div>
                 </div>
                 
-                <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg">
+                <p className="text-gray-600 dark:text-gray-300 mb-4 text-lg">
                   {project.description}
                 </p>
+                
+                {project.projectTypes && project.projectTypes.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {project.projectTypes.map((type) => (
+                      <span 
+                        key={type} 
+                        className={`text-sm px-3 py-1 rounded-full ${PROJECT_TYPE_COLORS[type]}`}
+                        title={type}
+                      >
+                        {PROJECT_TYPE_ABBREVIATIONS[type]}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 
                 <div className="flex items-center gap-4">
                   {project.websiteUrl && (

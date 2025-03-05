@@ -11,6 +11,7 @@ import { useAuth } from '@clerk/nextjs'
 import { Upload, Link as LinkIcon, Github } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Project } from '../types'
+import { ProjectType, PROJECT_TYPE_COLORS } from '../types'
 
 interface ProjectSubmissionFormProps {
   onSubmitSuccess?: (project: Project) => void
@@ -28,6 +29,7 @@ export function ProjectSubmissionForm({ onSubmitSuccess }: ProjectSubmissionForm
     websiteUrl: '',
     githubUrl: '',
   })
+  const [selectedProjectTypes, setSelectedProjectTypes] = useState<ProjectType[]>([])
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -78,16 +80,19 @@ export function ProjectSubmissionForm({ onSubmitSuccess }: ProjectSubmissionForm
       }
 
       // Submit project data
+      const projectData = {
+        ...formData,
+        logo: logoUrl,
+        projectTypes: selectedProjectTypes,
+        userId,
+      }
+
       const response = await fetch('/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          logo: logoUrl,
-          userId,
-        }),
+        body: JSON.stringify(projectData),
       })
 
       if (!response.ok) {
@@ -124,6 +129,17 @@ export function ProjectSubmissionForm({ onSubmitSuccess }: ProjectSubmissionForm
     
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
+
+  // Add a function to handle project type selection
+  const toggleProjectType = (type: ProjectType) => {
+    setSelectedProjectTypes(prev => {
+      if (prev.includes(type)) {
+        return prev.filter(t => t !== type);
+      } else {
+        return [...prev, type];
+      }
+    });
+  };
 
   // Common input class with rounded corners
   const inputClass = "mt-1 h-12 bg-white/80 dark:bg-zinc-800/80 border-gray-200 dark:border-gray-700 rounded-xl"
@@ -224,13 +240,42 @@ export function ProjectSubmissionForm({ onSubmitSuccess }: ProjectSubmissionForm
             className={inputClass}
           />
         </div>
+
+        <div className="mt-6">
+          <Label className="text-base font-medium mb-2 block">
+            Project Type (Select all that apply)
+          </Label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+            {Object.values(ProjectType).map((type) => (
+              <div 
+                key={type}
+                onClick={() => toggleProjectType(type)}
+                className={`
+                  px-3 py-2 rounded-xl cursor-pointer border transition-colors
+                  ${selectedProjectTypes.includes(type) 
+                    ? PROJECT_TYPE_COLORS[type] + ' border-transparent' 
+                    : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'}
+                `}
+              >
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedProjectTypes.includes(type)}
+                    onChange={() => {}}
+                    className="mr-2 h-4 w-4 rounded border-gray-300 text-[#0052FF] focus:ring-[#0052FF]"
+                  />
+                  <span className="text-sm font-medium">{type}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       <Button 
         type="submit" 
         disabled={isSubmitting}
-        size="lg"
-        className="w-full h-12 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white font-medium rounded-xl shadow-md transition-all hover:shadow-lg"
+        className="w-full h-12 mt-6 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white rounded-xl"
       >
         {isSubmitting ? 'Submitting...' : 'Submit Project'}
       </Button>

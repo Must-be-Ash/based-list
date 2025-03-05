@@ -12,6 +12,7 @@ import { Upload, Link as LinkIcon, Github, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ConfirmationDialog } from './ui/confirmation-dialog'
 import type { Project } from '../types'
+import { ProjectType, PROJECT_TYPE_COLORS } from '../types'
 
 interface ProjectEditFormProps {
   project: Project
@@ -39,6 +40,9 @@ export function ProjectEditForm({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+  const [selectedProjectTypes, setSelectedProjectTypes] = useState<ProjectType[]>(
+    project.projectTypes || []
+  )
   
   // Ensure the user is the owner of the project
   useEffect(() => {
@@ -115,6 +119,7 @@ export function ProjectEditForm({
       const projectData = {
         ...formData,
         logo: logoUrl,
+        projectTypes: selectedProjectTypes,
       }
       
       const response = await fetch(`/api/projects/${project._id}`, {
@@ -176,6 +181,16 @@ export function ProjectEditForm({
   // Common classes for styling
   const inputClass = "mt-1 h-12 bg-white/80 dark:bg-zinc-800/80 border-gray-200 dark:border-gray-700 rounded-xl"
   const textareaClass = "mt-1 h-32 bg-white/80 dark:bg-zinc-800/80 border-gray-200 dark:border-gray-700 resize-none rounded-xl"
+  
+  const toggleProjectType = (type: ProjectType) => {
+    setSelectedProjectTypes(prev => {
+      if (prev.includes(type)) {
+        return prev.filter(t => t !== type);
+      } else {
+        return [...prev, type];
+      }
+    });
+  };
   
   return (
     <>
@@ -287,6 +302,34 @@ export function ProjectEditForm({
               onChange={handleChange}
               className={`${inputClass} pl-10`}
             />
+          </div>
+        </div>
+        
+        <div className="mt-6">
+          <Label className="block mb-2">Project Type (Select all that apply)</Label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+            {Object.values(ProjectType).map((type) => (
+              <div 
+                key={type}
+                onClick={() => toggleProjectType(type)}
+                className={`
+                  px-3 py-2 rounded-xl cursor-pointer border transition-colors
+                  ${selectedProjectTypes.includes(type) 
+                    ? PROJECT_TYPE_COLORS[type] + ' border-transparent' 
+                    : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'}
+                `}
+              >
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedProjectTypes.includes(type)}
+                    onChange={() => {}}
+                    className="mr-2 h-4 w-4 rounded border-gray-300 text-[#0052FF] focus:ring-[#0052FF]"
+                  />
+                  <span className="text-sm font-medium">{type}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
         

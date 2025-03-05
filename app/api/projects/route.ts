@@ -3,14 +3,20 @@ import { currentUser } from '@clerk/nextjs/server'
 import clientPromise from '@/lib/mongodb'
 import type { Project } from '@/app/types'
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url)
+    const userId = searchParams.get('userId')
+    
     const client = await clientPromise
     const db = client.db('based-list')
     
+    // If userId is provided, filter projects by that userId
+    const query = userId ? { userId } : {}
+    
     const projects = await db
       .collection('projects')
-      .find({})
+      .find(query)
       .sort({ createdAt: -1 })
       .toArray()
 

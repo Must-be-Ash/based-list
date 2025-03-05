@@ -6,14 +6,17 @@ import { Input } from "@/app/components/ui/input"
 import { Role } from "@/app/types"
 import { Search } from "lucide-react"
 import { Builder } from "@/app/types"
+import { LoadingSpinner } from "@/app/components/ui/loading-spinner"
 
 export default function BuildersPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedRoles, setSelectedRoles] = useState<Role[]>([])
   const [builders, setBuilders] = useState<Builder[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     async function fetchBuilders() {
+      setIsLoading(true)
       try {
         const response = await fetch('/api/builders')
         if (!response.ok) throw new Error('Failed to fetch builders')
@@ -21,6 +24,8 @@ export default function BuildersPage() {
         setBuilders(data)
       } catch (error) {
         console.error('Error fetching builders:', error)
+      } finally {
+        setIsLoading(false)
       }
     }
     fetchBuilders()
@@ -83,7 +88,11 @@ export default function BuildersPage() {
         </div>
 
         {/* Builders Grid */}
-        {filteredBuilders.length === 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <LoadingSpinner size="lg" />
+          </div>
+        ) : filteredBuilders.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-600 dark:text-gray-400">
               {builders.length === 0 
