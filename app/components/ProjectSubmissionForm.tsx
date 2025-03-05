@@ -116,6 +116,12 @@ export function ProjectSubmissionForm({ onSubmitSuccess }: ProjectSubmissionForm
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target
+    
+    // Limit description to 80 characters
+    if (name === 'description' && value.length > 80) {
+      return
+    }
+    
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
@@ -140,15 +146,21 @@ export function ProjectSubmissionForm({ onSubmitSuccess }: ProjectSubmissionForm
         </div>
 
         <div>
-          <Label htmlFor="description" className="text-base font-medium">Description</Label>
+          <div className="flex justify-between items-center">
+            <Label htmlFor="description" className="text-base font-medium">Description</Label>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {formData.description.length}/80 characters
+            </span>
+          </div>
           <Textarea
             id="description"
             name="description"
             value={formData.description}
             onChange={handleChange}
             required
-            placeholder="Describe your project"
+            placeholder="Describe your project (max 80 characters)"
             className={textareaClass}
+            maxLength={80}
           />
         </div>
 
@@ -193,13 +205,14 @@ export function ProjectSubmissionForm({ onSubmitSuccess }: ProjectSubmissionForm
             value={formData.websiteUrl}
             onChange={handleChange}
             placeholder="https://yourproject.com"
+            required
             className={inputClass}
           />
         </div>
 
         <div>
           <Label htmlFor="githubUrl" className="text-base font-medium flex items-center gap-2">
-            <Github className="w-4 h-4" /> GitHub URL
+            <Github className="w-4 h-4" /> GitHub URL (optional)
           </Label>
           <Input
             id="githubUrl"

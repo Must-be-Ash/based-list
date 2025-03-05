@@ -3,6 +3,23 @@ import { currentUser } from '@clerk/nextjs/server'
 import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 
+// Define a type for the project document
+interface ProjectDocument {
+  _id: ObjectId;
+  name: string;
+  description: string;
+  logo?: string;
+  websiteUrl?: string;
+  githubUrl?: string;
+  userId: string;
+  builderName: string;
+  builderImage?: string;
+  upvotes: string[];
+  upvoteCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // POST to upvote a project
 export async function POST(
   request: Request,
@@ -23,7 +40,7 @@ export async function POST(
     
     // Check if project exists
     const project = await db
-      .collection('projects')
+      .collection<ProjectDocument>('projects')
       .findOne({ _id: new ObjectId(params.projectId) })
     
     if (!project) {
@@ -37,16 +54,15 @@ export async function POST(
     const upvotes = project.upvotes || []
     const hasUpvoted = upvotes.includes(user.id)
     
-    let result
-    
     if (hasUpvoted) {
       // Remove upvote if already upvoted (toggle behavior)
-      result = await db
-        .collection('projects')
+      await db
+        .collection<ProjectDocument>('projects')
         .updateOne(
           { _id: new ObjectId(params.projectId) },
           { 
-            $pull: { upvotes: user.id },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            $pull: { upvotes: user.id as any },
             $inc: { upvoteCount: -1 }
           }
         )
@@ -58,8 +74,8 @@ export async function POST(
       })
     } else {
       // Add upvote
-      result = await db
-        .collection('projects')
+      await db
+        .collection<ProjectDocument>('projects')
         .updateOne(
           { _id: new ObjectId(params.projectId) },
           { 
@@ -103,7 +119,7 @@ export async function GET(
     
     // Get project
     const project = await db
-      .collection('projects')
+      .collection<ProjectDocument>('projects')
       .findOne({ _id: new ObjectId(params.projectId) })
     
     if (!project) {

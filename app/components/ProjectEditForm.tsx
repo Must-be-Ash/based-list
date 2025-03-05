@@ -64,7 +64,20 @@ export function ProjectEditForm({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target
+    
+    // Add character limit for description
+    if (name === 'description' && value.length > 80) {
+      return
+    }
+    
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+  
+  // Function to handle discarding changes - navigate back to project page
+  const handleDiscard = () => {
+    // Navigate back to the project page without saving changes
+    router.push(`/projects/${project._id}`)
+    toast.info('Changes discarded')
   }
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -192,7 +205,7 @@ export function ProjectEditForm({
                 type="button"
                 variant="outline"
                 onClick={() => document.getElementById('logo-upload')?.click()}
-                className="relative"
+                className="relative rounded-xl"
               >
                 Change Logo
                 <input
@@ -223,19 +236,25 @@ export function ProjectEditForm({
         </div>
         
         <div>
-          <Label htmlFor="description">Description</Label>
+          <Label htmlFor="description">
+            Description 
+            <span className="text-xs text-gray-500 ml-2">
+              ({formData.description.length}/80 characters)
+            </span>
+          </Label>
           <Textarea
             id="description"
             name="description"
             value={formData.description}
             onChange={handleChange}
             required
+            maxLength={80}
             className={textareaClass}
           />
         </div>
         
         <div>
-          <Label htmlFor="websiteUrl">Website URL (optional)</Label>
+          <Label htmlFor="websiteUrl">Website URL</Label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <LinkIcon className="w-5 h-5 text-gray-400" />
@@ -247,6 +266,7 @@ export function ProjectEditForm({
               placeholder="https://yourproject.com"
               value={formData.websiteUrl}
               onChange={handleChange}
+              required
               className={`${inputClass} pl-10`}
             />
           </div>
@@ -282,13 +302,25 @@ export function ProjectEditForm({
             {isDeleting ? 'Deleting...' : 'Delete Project'}
           </Button>
           
-          <Button
-            type="submit"
-            disabled={isSubmitting || isDeleting}
-            className="rounded-xl"
-          >
-            {isSubmitting ? 'Saving...' : 'Save Changes'}
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              onClick={handleDiscard}
+              disabled={isSubmitting || isDeleting}
+              className="rounded-xl"
+            >
+              Discard Changes
+            </Button>
+            
+            <Button
+              type="submit"
+              variant="outline"
+              disabled={isSubmitting || isDeleting}
+              className="rounded-xl"
+            >
+              {isSubmitting ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
         </div>
       </form>
       
