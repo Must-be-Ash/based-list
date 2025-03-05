@@ -7,6 +7,7 @@ import { ObjectId } from 'mongodb'
 import { FaGlobe, FaGithub } from 'react-icons/fa'
 import { currentUser } from '@clerk/nextjs/server'
 import { Edit } from 'lucide-react'
+import { UpvoteButton } from '@/app/components/UpvoteButton'
 import type { Project } from '@/app/types'
 
 async function getProject(projectId: string): Promise<Project | null> {
@@ -43,6 +44,9 @@ export default async function ProjectPage({ params }: { params: { projectId: str
   // Check if the current user is the owner of the project
   const isOwner = user && user.id === project.userId
   
+  // Check if the current user has upvoted the project
+  const hasUpvoted = user && project.upvotes?.includes(user.id) || false
+  
   return (
     <main className="min-h-screen pt-32 pb-24 px-4">
       <div className="max-w-4xl mx-auto">
@@ -69,38 +73,54 @@ export default async function ProjectPage({ params }: { params: { projectId: str
                 <div className="flex justify-between items-start">
                   <h1 className="text-3xl font-bold mb-2">{project.name}</h1>
                   
-                  {isOwner && (
-                    <div className="flex gap-2">
-                      <Button asChild variant="outline" size="sm" className="gap-1">
+                  <div className="flex gap-2">
+                    <UpvoteButton 
+                      projectId={project._id} 
+                      initialUpvoteCount={project.upvoteCount || 0}
+                      initialUpvoted={hasUpvoted}
+                      size="default"
+                      className="rounded-xl shadow-sm hover:shadow hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all"
+                    />
+                    
+                    {isOwner && (
+                      <Button asChild variant="outline" className="gap-1 rounded-xl shadow-sm hover:shadow hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all">
                         <Link href={`/projects/${project._id}/edit`}>
                           <Edit className="w-4 h-4" />
                           Edit
                         </Link>
                       </Button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
                 
                 <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg">
                   {project.description}
                 </p>
                 
-                <div className="flex flex-wrap gap-3">
+                <div className="flex items-center gap-4">
                   {project.websiteUrl && (
-                    <Button asChild variant="outline" className="gap-2">
-                      <Link href={project.websiteUrl} target="_blank" rel="noopener noreferrer">
-                        <FaGlobe className="w-4 h-4" />
-                        Website
-                      </Link>
+                    <Button 
+                      asChild 
+                      variant="outline" 
+                      className="gap-2 rounded-xl shadow-sm hover:shadow hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all border-blue-200 dark:border-blue-900/30 text-blue-600 dark:text-blue-400"
+                    >
+                      <a href={project.websiteUrl} target="_blank" rel="noopener noreferrer">
+                        <FaGlobe className="w-4 h-4 text-blue-500" />
+                        Visit Website
+                      </a>
                     </Button>
                   )}
                   
                   {project.githubUrl && (
-                    <Button asChild variant="outline" className="gap-2">
-                      <Link href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                        <FaGithub className="w-4 h-4" />
-                        GitHub
-                      </Link>
+                    <Button 
+                      asChild 
+                      variant="outline" 
+                      className="gap-2 rounded-xl shadow-sm hover:shadow hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all"
+                    >
+                      <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                        <FaGithub className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                        View on GitHub
+                      </a>
                     </Button>
                   )}
                 </div>

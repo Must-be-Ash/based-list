@@ -75,6 +75,8 @@ export async function POST(req: Request) {
       userId: user.id,
       builderName: profile.name,
       builderImage: profile.profileImage,
+      upvotes: [],  // Initialize empty upvotes array
+      upvoteCount: 0, // Initialize upvote count to zero
       createdAt: new Date(),
       updatedAt: new Date(),
     }

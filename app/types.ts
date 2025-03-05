@@ -64,6 +64,8 @@ export interface Project {
   userId: string
   builderName: string
   builderImage?: string
+  upvotes?: string[]  // Array of userIds who upvoted
+  upvoteCount?: number // Total count of upvotes
   createdAt: Date
   updatedAt: Date
 } 
