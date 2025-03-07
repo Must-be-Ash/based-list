@@ -233,7 +233,14 @@ export async function GET(request: NextRequest) {
         const jsonString = JSON.stringify(savedProfile);
         const cleanedResponse = JSON.parse(jsonString);
         
-        return NextResponse.json(cleanedResponse);
+        // Return the response with cache control headers to prevent caching
+        return NextResponse.json(cleanedResponse, {
+          headers: {
+            'Cache-Control': 'no-store, max-age=0, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
       } catch (error) {
         console.error('Error processing ENS name lookup:', error);
         return NextResponse.json(
@@ -242,7 +249,14 @@ export async function GET(request: NextRequest) {
             error: 'PROCESSING_ERROR',
             details: error instanceof Error ? error.stack : 'No stack trace available'
           },
-          { status: 500 }
+          { 
+            status: 500,
+            headers: {
+              'Cache-Control': 'no-store, max-age=0, must-revalidate',
+              'Pragma': 'no-cache',
+              'Expires': '0'
+            }
+          }
         );
       }
     } else if (type === 'address' && address) {
@@ -381,7 +395,13 @@ export async function GET(request: NextRequest) {
           records: cleanedRecords,
         };
         
-        return NextResponse.json(response);
+        return NextResponse.json(response, {
+          headers: {
+            'Cache-Control': 'no-store, max-age=0, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
       } catch (error) {
         console.error('Error processing ENS address lookup:', error);
         return NextResponse.json(
@@ -390,7 +410,14 @@ export async function GET(request: NextRequest) {
             error: 'PROCESSING_ERROR',
             details: error instanceof Error ? error.stack : 'No stack trace available'
           },
-          { status: 500 }
+          { 
+            status: 500,
+            headers: {
+              'Cache-Control': 'no-store, max-age=0, must-revalidate',
+              'Pragma': 'no-cache',
+              'Expires': '0'
+            }
+          }
         );
       }
     }
@@ -412,7 +439,14 @@ export async function GET(request: NextRequest) {
         error: 'UNEXPECTED_ERROR',
         details: error instanceof Error ? error.stack : 'No stack trace available'
       },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store, max-age=0, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      }
     );
   }
 } 

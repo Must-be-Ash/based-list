@@ -48,9 +48,25 @@ export async function GET() {
         createdAt: p.createdAt,
         updatedAt: p.updatedAt
       }))
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     });
   } catch (error) {
-    console.error('Debug API error:', error);
-    return NextResponse.json({ error: 'Failed to get debug info' }, { status: 500 });
+    console.error('Error in debug API:', error);
+    return NextResponse.json(
+      { error: 'Failed to get debug info' },
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store, max-age=0, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      }
+    );
   }
 } 

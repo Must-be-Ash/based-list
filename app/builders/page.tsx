@@ -18,7 +18,8 @@ export default function BuildersPage() {
     async function fetchBuilders() {
       setIsLoading(true)
       try {
-        const response = await fetch('/api/builders')
+        // Add cache-busting query parameter
+        const response = await fetch(`/api/builders?t=${Date.now()}`)
         if (!response.ok) throw new Error('Failed to fetch builders')
         const data = await response.json()
         setBuilders(data)
