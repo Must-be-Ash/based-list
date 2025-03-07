@@ -17,7 +17,7 @@ export async function GET() {
       })
     );
     
-    // Get the latest profiles
+    // Get the latest profiles with more details
     const profiles = await db.collection('profiles').find().sort({ updatedAt: -1 }).limit(5).toArray();
     const ensProfiles = await db.collection('ens_profiles').find().sort({ updatedAt: -1 }).limit(5).toArray();
     
@@ -27,8 +27,13 @@ export async function GET() {
         _id: p._id.toString(),
         name: p.name,
         ensName: p.ensName,
+        bio: p.bio,
         profileImage: p.profileImage,
+        links: p.links,
+        socials: p.socials,
+        ethAddress: p.ethAddress,
         isENSProfile: p.isENSProfile,
+        skills: p.skills,
         createdAt: p.createdAt,
         updatedAt: p.updatedAt
       })),
@@ -36,7 +41,10 @@ export async function GET() {
         _id: p._id.toString(),
         name: p.name,
         avatar: p.avatar,
-        localAvatar: p.localAvatar,
+        records: p.records,
+        address: p.address,
+        contentHash: p.contentHash,
+        skills: p.skills,
         createdAt: p.createdAt,
         updatedAt: p.updatedAt
       }))

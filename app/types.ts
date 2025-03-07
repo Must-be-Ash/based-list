@@ -100,6 +100,10 @@ export interface Builder {
   socials?: Socials
   userId: string
   roles?: Role[]  // Users can select multiple roles
+  skills?: string[] // Skills extracted from ENS profiles or set by users
+  ensName?: string // ENS name if this is an ENS profile
+  isENSProfile?: boolean // Flag to indicate if this is an ENS profile
+  ethAddress?: string // Ethereum address if available
 }
 
 export interface Project {

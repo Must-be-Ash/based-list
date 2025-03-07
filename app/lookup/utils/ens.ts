@@ -98,4 +98,53 @@ export function cleanEnsRecordValue(value: string): string {
   // Replace all whitespace (including newlines, tabs, etc.) with a single space
   // Then trim any leading/trailing spaces
   return value.replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Formats an IPFS URL to use the IPFS gateway
+ * @param url The IPFS URL to format (e.g., ipfs://bafkreifde5bqt2gcourzk4u7uexvegzqbmcfhmj7psle6hyllhlvwwlzhe)
+ * @returns The formatted URL (e.g., https://ipfs.io/ipfs/bafkreifde5bqt2gcourzk4u7uexvegzqbmcfhmj7psle6hyllhlvwwlzhe)
+ */
+export function formatIpfsUrl(url: string): string {
+  if (!url) return '';
+  
+  try {
+    // Clean the URL first
+    url = cleanEnsRecordValue(url);
+    
+    // Handle IPFS URLs
+    if (url.startsWith('ipfs://')) {
+      return url.replace('ipfs://', 'https://ipfs.io/ipfs/');
+    }
+    
+    // Handle Arweave URLs
+    if (url.startsWith('ar://')) {
+      return url.replace('ar://', 'https://arweave.net/');
+    }
+    
+    // Handle EIP155 URLs (NFTs)
+    if (url.startsWith('eip155:')) {
+      console.log('EIP155 avatar format detected, this may not display correctly');
+      // For EIP155, we would need to resolve the NFT image URL
+      // This is a complex process that would require additional API calls
+      // For now, we'll just return a placeholder or the original URL
+      return url;
+    }
+    
+    // Check if the URL is already a valid HTTP URL
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // If it's just a CID without the ipfs:// prefix, add the IPFS gateway
+    if (url.match(/^[a-zA-Z0-9]{46,59}$/)) {
+      return `https://ipfs.io/ipfs/${url}`;
+    }
+    
+    // Return the original URL if it doesn't match any known format
+    return url;
+  } catch (error) {
+    console.error('Error formatting IPFS URL:', error);
+    return url;
+  }
 } 

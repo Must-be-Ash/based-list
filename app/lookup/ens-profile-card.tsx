@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Copy, ExternalLink, Check, Twitter, Github, Mail, Globe, User } from 'lucide-react';
 import { Badge } from '@/app/components/ui/badge';
-import { cleanEnsRecordValue } from '@/app/lookup/utils/ens';
+import { formatIpfsUrl } from '@/app/lookup/utils/ens';
 
 interface ENSRecord {
   key: string;
@@ -21,6 +21,7 @@ interface ENSProfile {
   avatar?: string;
   records: ENSRecord[];
   contentHash?: string;
+  skills?: string[];
 }
 
 export default function ENSProfileCard({ profile }: { profile: ENSProfile }) {
@@ -139,10 +140,10 @@ export default function ENSProfileCard({ profile }: { profile: ENSProfile }) {
     // Use the avatar URL directly - it should already be the local URL from the API
     let avatarUrl = profile.avatar;
     
-    // Clean the avatar URL
-    avatarUrl = cleanEnsRecordValue(avatarUrl);
+    // Clean and format the avatar URL
+    avatarUrl = formatIpfsUrl(avatarUrl);
     
-    console.log('Using avatar URL:', avatarUrl);
+    console.log('Using formatted avatar URL:', avatarUrl);
     
     try {
       // Ensure the URL is valid by creating a URL object
@@ -158,42 +159,16 @@ export default function ENSProfileCard({ profile }: { profile: ENSProfile }) {
       );
     }
 
-    // Handle different avatar formats according to ENS documentation
-    if (avatarUrl.startsWith('ipfs://')) {
-      // IPFS format
-      avatarUrl = avatarUrl.replace('ipfs://', 'https://ipfs.io/ipfs/');
-    } else if (avatarUrl.startsWith('ar://')) {
-      // Arweave format
-      avatarUrl = avatarUrl.replace('ar://', 'https://arweave.net/');
-    } else if (avatarUrl.startsWith('eip155:')) {
-      // EIP155 format (NFT)
-      console.log('EIP155 avatar format detected, this may not display correctly');
-      // For EIP155, we would need to resolve the NFT image URL
-      // This is a complex process that would require additional API calls
-      // For now, we'll just use the fallback avatar
-      const initials = profile.name.split('.')[0].substring(0, 2).toUpperCase();
-      return (
-        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#0052FF] to-[#0052FF]/70 flex items-center justify-center text-white text-2xl font-bold">
-          {initials}
-        </div>
-      );
-    }
-
+    // Return the image with the formatted URL
     return (
-      <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white dark:border-[#121212] shadow-lg">
-        <Image 
-          src={avatarUrl} 
-          alt={`${profile.name} avatar`} 
-          fill
-          className="object-cover"
-          onError={(e) => {
-            console.error('Error loading avatar image:', avatarUrl);
-            console.error('Error event:', e);
-            setAvatarError(true);
-          }}
-          unoptimized={true} // Try with unoptimized to bypass Next.js image optimization
-        />
-      </div>
+      <Image
+        src={avatarUrl}
+        alt={profile.name}
+        width={96}
+        height={96}
+        className="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-black"
+        onError={() => setAvatarError(true)}
+      />
     );
   };
 
@@ -210,6 +185,35 @@ export default function ENSProfileCard({ profile }: { profile: ENSProfile }) {
     if (key.includes('email')) return <Mail size={16} className="text-[#0052FF]" />;
     if (key.includes('url') || key.includes('website')) return <Globe size={16} className="text-[#0052FF]" />;
     return <User size={16} className="text-[#0052FF]" />;
+  };
+
+  // Extract skills from profile or records
+  const getSkills = () => {
+    // If skills are directly available in the profile, use them
+    if (profile.skills && profile.skills.length > 0) {
+      return profile.skills;
+    }
+    
+    // Otherwise, look for skill-related records
+    const skillRecords = records.filter(r => 
+      r.key.includes('skill') || 
+      r.key.includes('expertise') || 
+      r.key.includes('technology')
+    );
+    
+    if (skillRecords.length > 0) {
+      const skills: string[] = [];
+      skillRecords.forEach(record => {
+        if (record.value.includes(',')) {
+          skills.push(...record.value.split(',').map(s => s.trim()));
+        } else {
+          skills.push(record.value.trim());
+        }
+      });
+      return skills;
+    }
+    
+    return [];
   };
 
   return (
@@ -235,6 +239,21 @@ export default function ENSProfileCard({ profile }: { profile: ENSProfile }) {
                 
                 {descriptionRecord && (
                   <p className="text-[#393939]/80 dark:text-[#e0e0e0]/80 mb-3">{descriptionRecord.value}</p>
+                )}
+                
+                {/* Display skills if available */}
+                {getSkills().length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4 justify-center md:justify-start">
+                    {getSkills().map((skill) => (
+                      <Badge 
+                        key={skill} 
+                        variant="secondary" 
+                        className="bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 hover:bg-blue-100"
+                      >
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
                 )}
                 
                 {profile.address && (

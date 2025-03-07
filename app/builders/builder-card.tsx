@@ -6,6 +6,7 @@ import Image from "next/image"
 import { UserCircle } from "lucide-react"
 import { FaDiscord, FaGithub, FaGlobe, FaLinkedin, FaTelegram, FaTwitter } from "react-icons/fa"
 import { Builder, ROLE_COLORS, ROLE_ABBREVIATIONS } from "@/app/types"
+import { formatIpfsUrl } from "@/app/lookup/utils/ens"
 
 export function BuilderCard({ builder }: { builder: Builder }) {
   // Ensure links array exists and has the required structure
@@ -21,14 +22,17 @@ export function BuilderCard({ builder }: { builder: Builder }) {
   const twitter = typeof socials.twitter === 'string' ? socials.twitter : ''
   const linkedin = typeof socials.linkedin === 'string' ? socials.linkedin : ''
 
+  // Format the profile image URL if it's an IPFS URL
+  const profileImageUrl = builder.profileImage ? formatIpfsUrl(builder.profileImage) : null;
+
   return (
     <Link href={`/profile/${builder.userId}`}>
       <Card className="bg-white/80 dark:bg-black/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 border-0 h-[260px] flex flex-col">
         <CardHeader className="flex flex-row items-start gap-4 flex-shrink-0 pb-0">
           <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center ring-2 ring-[#0052FF]/20">
-            {builder.profileImage ? (
+            {profileImageUrl ? (
               <Image
-                src={builder.profileImage}
+                src={profileImageUrl}
                 alt={builder.name || "Profile"}
                 fill
                 className="object-cover"
@@ -64,6 +68,28 @@ export function BuilderCard({ builder }: { builder: Builder }) {
             <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
               {builder.bio || "No bio yet"}
             </p>
+            
+            {/* Display skills if available */}
+            {builder.skills && builder.skills.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {builder.skills.slice(0, 3).map((skill) => (
+                  <span
+                    key={skill}
+                    className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                  >
+                    {skill}
+                  </span>
+                ))}
+                {builder.skills.length > 3 && (
+                  <span
+                    className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+                    title={builder.skills.slice(3).join(", ")}
+                  >
+                    +{builder.skills.length - 3}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col justify-end pt-2 space-y-3">
