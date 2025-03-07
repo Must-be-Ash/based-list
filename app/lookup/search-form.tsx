@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Input } from '@/app/components/ui/input';
 import { Button } from '@/app/components/ui/button';
 import { Label } from '@/app/components/ui/label';
@@ -10,13 +10,50 @@ import { motion } from 'framer-motion';
 
 interface SearchFormProps {
   onSearch: (query: string, type: 'name' | 'address') => Promise<void>;
+  onSearchChange?: (query: string, type: 'name' | 'address') => Promise<void>;
   isSearching: boolean;
 }
 
-export default function SearchForm({ onSearch, isSearching }: SearchFormProps) {
+export default function SearchForm({ onSearch, onSearchChange, isSearching }: SearchFormProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'name' | 'address'>('name');
   const [error, setError] = useState<string | null>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastQueryRef = useRef<string>('');
+
+  // Handle real-time search with debouncing
+  useEffect(() => {
+    if (!onSearchChange || !searchQuery || searchQuery.length < 2) return;
+    
+    // Skip if the query is the same as the last one we searched for
+    if (searchQuery.toLowerCase() === lastQueryRef.current) return;
+    
+    // Clear previous timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    // Set a new timer
+    debounceTimerRef.current = setTimeout(() => {
+      if (searchType === 'name') {
+        const normalizedQuery = searchQuery.toLowerCase();
+        lastQueryRef.current = normalizedQuery;
+        onSearchChange(searchQuery, searchType);
+      }
+    }, 300); // 300ms debounce
+    
+    // Cleanup on unmount
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [searchQuery, searchType, onSearchChange]);
+
+  // Reset lastQuery when search type changes
+  useEffect(() => {
+    lastQueryRef.current = '';
+  }, [searchType]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,6 +150,7 @@ export default function SearchForm({ onSearch, isSearching }: SearchFormProps) {
                 setError(null); // Clear error when input changes
               }}
               className="pl-10 pr-4 py-2 h-12 text-base rounded-xl"
+              autoComplete="off"
             />
             <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0052FF]/60">
               {searchType === 'name' ? <Search size={18} /> : <User size={18} />}
