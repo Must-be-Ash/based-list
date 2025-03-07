@@ -7,6 +7,7 @@ import { DockWrapper } from "./components/DockWrapper"
 import { Footer } from "./components/Footer"
 import { ScrollToTop } from "./components/ScrollToTop"
 import { Analytics } from "@vercel/analytics/react"
+import { Providers } from "./providers"
 
 const inter = Inter({
   subsets: ['latin'],
@@ -72,14 +73,16 @@ export default function RootLayout({
     >
       <html lang="en">
         <body className={`${inter.variable} antialiased bg-[#fafafa] text-[#393939] min-h-screen flex flex-col`}>
-          <DockWrapper />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-          <ScrollToTop />
-          <Toaster />
-          <Analytics />
+          <Providers>
+            <DockWrapper />
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
+            <ScrollToTop />
+            <Toaster />
+            <Analytics />
+          </Providers>
         </body>
       </html>
     </ClerkProvider>

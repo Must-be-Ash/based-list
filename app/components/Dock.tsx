@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Home, Library, UserCircle, Globe } from "lucide-react"
+import { Home, Library, UserCircle, Globe, Search } from "lucide-react"
 import { Dock as DockContainer, DockIcon } from "./ui/dock"
 import { usePathname } from "next/navigation"
 
@@ -12,6 +12,7 @@ export const Dock = () => {
     if (path === '/builders' && pathname === '/builders') return true
     if (path === '/discover' && pathname.startsWith('/discover')) return true
     if (path === '/resources' && pathname.startsWith('/resources')) return true
+    if (path === '/lookup' && pathname.startsWith('/lookup')) return true
     if (path === '/profile' && (pathname === '/profile' || pathname.startsWith('/profile/'))) return true
     return false
   }
@@ -34,6 +35,12 @@ export const Dock = () => {
         <Link href="/resources">
           <DockIcon className={`${isActive('/resources') ? 'text-[#0052FF]' : 'text-[#393939] hover:text-[#0052FF]'} bg-white/80 dark:bg-black/80`}>
             <Library className="size-6" />
+          </DockIcon>
+        </Link>
+        
+        <Link href="/lookup">
+          <DockIcon className={`${isActive('/lookup') ? 'text-[#0052FF]' : 'text-[#393939] hover:text-[#0052FF]'} bg-white/80 dark:bg-black/80`}>
+            <Search className="size-6" />
           </DockIcon>
         </Link>
         

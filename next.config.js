@@ -29,6 +29,39 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'www.basedlist.dev',
+      },
+      // ENS and IPFS related domains
+      {
+        protocol: 'https',
+        hostname: 'metadata.ens.domains',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ipfs.io',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.ipfs.dweb.link',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.ipfs.cf-ipfs.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'gateway.ipfs.io',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cloudflare-ipfs.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'gateway.pinata.cloud',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.eth.limo',
       }
     ],
   },

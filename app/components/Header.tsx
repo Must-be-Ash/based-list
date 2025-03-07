@@ -25,6 +25,9 @@ export function Header() {
         <Link href="/builders" className="text-lg font-semibold hover:text-gray-600 dark:hover:text-gray-300">
           Builders
         </Link>
+        <Link href="/lookup" className="text-lg font-semibold hover:text-gray-600 dark:hover:text-gray-300">
+          Lookup
+        </Link>
       </nav>
       <div className="flex items-center gap-4">
         <SignedOut>

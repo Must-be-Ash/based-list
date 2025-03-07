@@ -1,0 +1,141 @@
+specVersion: 0.0.4
+description: Ethereum Name Service (ENS)
+repository: https://github.com/ensdomains/ens-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: ENSRegistry
+    network: mainnet
+    source:
+      address: "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+      abi: ENSRegistry
+      startBlock: 9380380
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/ensRegistry.ts
+      entities:
+        - Domain
+        - Account
+        - Resolver
+      abis:
+        - name: ENSRegistry
+          file: ./abis/ENSRegistry.json
+      eventHandlers:
+        - event: NewOwner(indexed bytes32,indexed bytes32,address)
+          handler: handleNewOwner
+        - event: Transfer(indexed bytes32,address)
+          handler: handleTransfer
+        - event: NewResolver(indexed bytes32,address)
+          handler: handleNewResolver
+        - event: NewTTL(indexed bytes32,uint64)
+          handler: handleNewTTL
+  - kind: ethereum/contract
+    name: BaseRegistrarImplementation
+    network: mainnet
+    source:
+      address: "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85"
+      abi: BaseRegistrarImplementation
+      startBlock: 9380410
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/baseRegistrar.ts
+      entities:
+        - Registration
+        - Domain
+        - Account
+      abis:
+        - name: BaseRegistrarImplementation
+          file: ./abis/BaseRegistrarImplementation.json
+      eventHandlers:
+        - event: NameRegistered(indexed uint256,indexed address,uint256)
+          handler: handleNameRegistered
+        - event: NameRenewed(indexed uint256,uint256)
+          handler: handleNameRenewed
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+  - kind: ethereum/contract
+    name: PublicResolver
+    network: mainnet
+    source:
+      address: "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41"
+      abi: PublicResolver
+      startBlock: 9380410
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/publicResolver.ts
+      entities:
+        - Domain
+        - Resolver
+        - AddrChanged
+        - MulticoinAddrChanged
+        - NameChanged
+        - AbiChanged
+        - PubkeyChanged
+        - TextChanged
+        - ContenthashChanged
+        - InterfaceChanged
+        - AuthorisationChanged
+        - VersionChanged
+      abis:
+        - name: PublicResolver
+          file: ./abis/PublicResolver.json
+      eventHandlers:
+        - event: ABIChanged(indexed bytes32,indexed uint256)
+          handler: handleABIChanged
+        - event: AddrChanged(indexed bytes32,address)
+          handler: handleAddrChanged
+        - event: AddressChanged(indexed bytes32,uint256,bytes)
+          handler: handleAddressChanged
+        - event: AuthorisationChanged(indexed bytes32,indexed address,indexed address,bool)
+          handler: handleAuthorisationChanged
+        - event: ContenthashChanged(indexed bytes32,bytes)
+          handler: handleContenthashChanged
+        - event: InterfaceChanged(indexed bytes32,indexed bytes4,address)
+          handler: handleInterfaceChanged
+        - event: NameChanged(indexed bytes32,string)
+          handler: handleNameChanged
+        - event: PubkeyChanged(indexed bytes32,bytes32,bytes32)
+          handler: handlePubkeyChanged
+        - event: TextChanged(indexed bytes32,indexed string,string)
+          handler: handleTextChanged
+        - event: VersionChanged(indexed bytes32,uint64)
+          handler: handleVersionChanged
+  - kind: ethereum/contract
+    name: NameWrapper
+    network: mainnet
+    source:
+      address: "0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401"
+      abi: NameWrapper
+      startBlock: 14804385
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/nameWrapper.ts
+      entities:
+        - Domain
+        - WrappedDomain
+        - Account
+      abis:
+        - name: NameWrapper
+          file: ./abis/NameWrapper.json
+      eventHandlers:
+        - event: NameWrapped(indexed bytes32,bytes,indexed address,uint32,uint64)
+          handler: handleNameWrapped
+        - event: NameUnwrapped(indexed bytes32,indexed address)
+          handler: handleNameUnwrapped
+        - event: FusesSet(indexed bytes32,uint32)
+          handler: handleFusesSet
+        - event: ExpiryExtended(indexed bytes32,uint64)
+          handler: handleExpiryExtended
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleTransferSingle
+        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
+          handler: handleTransferBatch 
