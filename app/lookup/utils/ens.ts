@@ -85,4 +85,17 @@ export async function getAddress(name: string): Promise<string | null> {
     console.error('Error fetching ENS address:', error);
     return null;
   }
+}
+
+/**
+ * Cleans ENS record values by removing newlines and extra whitespace
+ * @param value The record value to clean
+ * @returns The cleaned record value
+ */
+export function cleanEnsRecordValue(value: string): string {
+  if (!value) return '';
+  
+  // Replace all whitespace (including newlines, tabs, etc.) with a single space
+  // Then trim any leading/trailing spaces
+  return value.replace(/\s+/g, ' ').trim();
 } 

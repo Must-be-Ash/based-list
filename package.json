@@ -21,7 +21,7 @@
     "framer-motion": "^12.4.10",
     "lucide-react": "^0.474.0",
     "mongodb": "^6.13.0",
-    "mongoose": "^8.10.2",
+    "mongoose": "^8.12.1",
     "motion": "^12.4.0",
     "nanoid": "^5.1.2",
     "next": "^14.2.23",

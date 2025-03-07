@@ -8,6 +8,10 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'zku9gdedgba48lmr.public.blob.vercel-storage.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'img.clerk.com',
       },
       {
@@ -62,8 +66,19 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: '*.eth.limo',
-      }
+      },
+      // Allow any vercel storage domain
+      {
+        protocol: 'https',
+        hostname: '*.vercel-storage.com',
+      },
+      // Allow any domain for development
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
     ],
+    unoptimized: process.env.NODE_ENV === 'development',
   },
   webpack: (config) => {
     config.resolve.fallback = {

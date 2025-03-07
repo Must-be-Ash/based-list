@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createPublicClient, http, isAddress, keccak256, stringToHex, concat, Address } from 'viem';
 import { base } from 'viem/chains';
 import { normalize } from 'viem/ens';
+import { cleanEnsRecordValue } from '@/app/lookup/utils/ens';
+import { saveENSProfile } from '@/app/lookup/utils/db';
 
 // Base ENS contract addresses
 const BASE_REGISTRY_ADDRESS = '0xb94704422c2a1e396835a571837aa5ae53285a95';
@@ -202,15 +204,36 @@ export async function GET(request: NextRequest) {
         // Filter out null records
         const validRecords = textRecords.filter((record): record is TextRecord => record !== null);
         
+        // Clean record values (remove newlines, trim whitespace)
+        const cleanedRecords = validRecords.map(record => {
+          if (record.value && typeof record.value === 'string') {
+            // Use the utility function to clean the record value
+            const cleanedValue = cleanEnsRecordValue(record.value);
+            console.log(`Cleaned record ${record.key}: "${record.value}" -> "${cleanedValue}"`);
+            return {
+              ...record,
+              value: cleanedValue
+            };
+          }
+          return record;
+        });
+        
         // Format the response
         const response = {
           name: normalizedName,
           address: ownerAddress,
-          records: validRecords,
+          records: cleanedRecords,
           contentHash: contentHash,
         };
         
-        return NextResponse.json(response);
+        // Save the profile to MongoDB and get the updated profile with local avatar
+        const savedProfile = await saveENSProfile(response);
+        
+        // Convert to JSON and back to ensure all strings are properly cleaned
+        const jsonString = JSON.stringify(savedProfile);
+        const cleanedResponse = JSON.parse(jsonString);
+        
+        return NextResponse.json(cleanedResponse);
       } catch (error) {
         console.error('Error processing ENS name lookup:', error);
         return NextResponse.json(
@@ -337,11 +360,25 @@ export async function GET(request: NextRequest) {
         // Filter out null records
         const validRecords = textRecords.filter((record): record is TextRecord => record !== null);
         
+        // Clean record values (remove newlines, trim whitespace)
+        const cleanedRecords = validRecords.map(record => {
+          if (record.value && typeof record.value === 'string') {
+            // Use the utility function to clean the record value
+            const cleanedValue = cleanEnsRecordValue(record.value);
+            console.log(`Cleaned record ${record.key}: "${record.value}" -> "${cleanedValue}"`);
+            return {
+              ...record,
+              value: cleanedValue
+            };
+          }
+          return record;
+        });
+        
         // Format the response
         const response = {
           name: normalizedName,
           address: address,
-          records: validRecords,
+          records: cleanedRecords,
         };
         
         return NextResponse.json(response);

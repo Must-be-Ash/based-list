@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Copy, ExternalLink, Check, Twitter, Github, Mail, Globe, User } from 'lucide-react';
 import { Badge } from '@/app/components/ui/badge';
+import { cleanEnsRecordValue } from '@/app/lookup/utils/ens';
 
 interface ENSRecord {
   key: string;
@@ -31,7 +32,18 @@ export default function ENSProfileCard({ profile }: { profile: ENSProfile }) {
   useEffect(() => {
     // Ensure records is always an array
     setRecords(Array.isArray(profile.records) ? profile.records : []);
-  }, [profile.records]);
+    
+    // Debug profile data
+    console.log('Profile data:', profile);
+    console.log('Avatar from profile:', profile.avatar);
+    
+    // Check for avatar in records
+    const avatarRecord = Array.isArray(profile.records) 
+      ? profile.records.find(r => r.key === 'avatar') 
+      : undefined;
+    
+    console.log('Avatar record from records:', avatarRecord);
+  }, [profile, profile.records]);
   
   // Helper function to format record values based on type
   const formatRecordValue = (record: ENSRecord) => {
@@ -124,10 +136,47 @@ export default function ENSProfileCard({ profile }: { profile: ENSProfile }) {
       );
     }
 
-    // For IPFS avatars, try to use a gateway
+    // Use the avatar URL directly - it should already be the local URL from the API
     let avatarUrl = profile.avatar;
+    
+    // Clean the avatar URL
+    avatarUrl = cleanEnsRecordValue(avatarUrl);
+    
+    console.log('Using avatar URL:', avatarUrl);
+    
+    try {
+      // Ensure the URL is valid by creating a URL object
+      // This will throw an error if the URL is invalid
+      new URL(avatarUrl);
+    } catch (error) {
+      console.error('Invalid avatar URL:', avatarUrl, error);
+      setAvatarError(true);
+      return (
+        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#0052FF] to-[#0052FF]/70 flex items-center justify-center text-white text-2xl font-bold">
+          {profile.name.split('.')[0].substring(0, 2).toUpperCase()}
+        </div>
+      );
+    }
+
+    // Handle different avatar formats according to ENS documentation
     if (avatarUrl.startsWith('ipfs://')) {
+      // IPFS format
       avatarUrl = avatarUrl.replace('ipfs://', 'https://ipfs.io/ipfs/');
+    } else if (avatarUrl.startsWith('ar://')) {
+      // Arweave format
+      avatarUrl = avatarUrl.replace('ar://', 'https://arweave.net/');
+    } else if (avatarUrl.startsWith('eip155:')) {
+      // EIP155 format (NFT)
+      console.log('EIP155 avatar format detected, this may not display correctly');
+      // For EIP155, we would need to resolve the NFT image URL
+      // This is a complex process that would require additional API calls
+      // For now, we'll just use the fallback avatar
+      const initials = profile.name.split('.')[0].substring(0, 2).toUpperCase();
+      return (
+        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#0052FF] to-[#0052FF]/70 flex items-center justify-center text-white text-2xl font-bold">
+          {initials}
+        </div>
+      );
     }
 
     return (
@@ -137,7 +186,12 @@ export default function ENSProfileCard({ profile }: { profile: ENSProfile }) {
           alt={`${profile.name} avatar`} 
           fill
           className="object-cover"
-          onError={() => setAvatarError(true)}
+          onError={(e) => {
+            console.error('Error loading avatar image:', avatarUrl);
+            console.error('Error event:', e);
+            setAvatarError(true);
+          }}
+          unoptimized={true} // Try with unoptimized to bypass Next.js image optimization
         />
       </div>
     );
