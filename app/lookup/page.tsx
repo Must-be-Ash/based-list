@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { LoadingSpinner } from '@/app/components/ui/loading-spinner';
 import ENSProfileCard from './ens-profile-card';
 import SearchForm from './search-form';
@@ -153,6 +153,16 @@ export default function LookupPage() {
       handleSearch(searchQuery, searchType);
     }
   }, [router, searchQuery, searchType, handleSearch]);
+
+  // Handle URL parameters for direct navigation
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const nameParam = urlParams.get('name');
+    
+    if (nameParam) {
+      handleSearch(nameParam, 'name');
+    }
+  }, [handleSearch]);
 
   return (
     <div className="container mx-auto px-4 py-28">

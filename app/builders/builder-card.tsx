@@ -25,8 +25,27 @@ export function BuilderCard({ builder }: { builder: Builder }) {
   // Format the profile image URL if it's an IPFS URL
   const profileImageUrl = builder.profileImage ? formatIpfsUrl(builder.profileImage) : null;
 
+  // Function to ensure URLs have proper protocol
+  const formatUrl = (url: string, type: 'website' | 'github'): string => {
+    if (!url) return '';
+    
+    // If URL already has a protocol, return it as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // Add appropriate protocol based on link type
+    if (type === 'website') {
+      return `https://${url}`;
+    } else if (type === 'github') {
+      return `https://github.com/${url}`;
+    }
+    
+    return url;
+  };
+
   return (
-    <Link href={`/profile/${builder.userId}`}>
+    <Link href={builder.userId ? `/profile/${builder.userId}` : (builder.ensName ? `/lookup?name=${builder.ensName.split('.')[0]}` : '#')}>
       <Card className="bg-white/80 dark:bg-black/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 border-0 h-[260px] flex flex-col">
         <CardHeader className="flex flex-row items-start gap-4 flex-shrink-0 pb-0">
           <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center ring-2 ring-[#0052FF]/20">
@@ -99,14 +118,14 @@ export function BuilderCard({ builder }: { builder: Builder }) {
               link?.url ? (
                 <a
                   key={index}
-                  href={link.url}
+                  href={formatUrl(link.url, index === 0 ? 'website' : 'github')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-[#0052FF]/10 dark:hover:bg-[#0052FF]/20 transition-all group border border-gray-200 dark:border-gray-700"
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
-                    window.open(link.url, '_blank')
+                    window.open(formatUrl(link.url, index === 0 ? 'website' : 'github'), '_blank')
                   }}
                 >
                   {index === 0 ? <FaGlobe className="w-4 h-4 text-[#0052FF]" /> : <FaGithub className="w-4 h-4 text-[#0052FF]" />}

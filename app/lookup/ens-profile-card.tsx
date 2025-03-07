@@ -50,44 +50,74 @@ export default function ENSProfileCard({ profile }: { profile: ENSProfile }) {
   const formatRecordValue = (record: ENSRecord) => {
     if (!record || !record.value) return null;
     
-    if (record.key.includes('url') || record.key.includes('website') || record.key.includes('com.')) {
-      // For Twitter, GitHub, etc., add the appropriate URL prefix if not present
-      let url = record.value;
-      
-      if (record.key === 'com.twitter' && !url.startsWith('http')) {
-        url = `https://twitter.com/${url}`;
-      } else if (record.key === 'com.github' && !url.startsWith('http')) {
-        url = `https://github.com/${url}`;
-      } else if (!url.startsWith('http')) {
-        url = `https://${url}`;
-      }
-      
+    // Format URLs and social links
+    if (record.key === 'url' || record.key === 'website') {
+      const url = formatExternalUrl(record.value, 'website');
       return (
         <a 
           href={url} 
           target="_blank" 
-          rel="noopener noreferrer"
-          className="text-[#0052FF] hover:underline break-all flex items-center gap-1 group"
+          rel="noopener noreferrer" 
+          className="text-[#0052FF] hover:underline flex items-center gap-1"
         >
-          {record.value}
-          <ExternalLink size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+          {record.value} <ExternalLink size={14} />
         </a>
       );
     }
     
-    if (record.key.includes('email')) {
+    // Format GitHub links
+    if (record.key === 'com.github') {
+      const url = formatExternalUrl(record.value, 'github');
       return (
         <a 
-          href={`mailto:${record.value}`} 
-          className="text-[#0052FF] hover:underline break-all flex items-center gap-1 group"
+          href={url} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-[#0052FF] hover:underline flex items-center gap-1"
         >
-          {record.value}
-          <ExternalLink size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+          {record.value} <ExternalLink size={14} />
         </a>
       );
     }
     
-    return <span className="break-all">{record.value}</span>;
+    // Format Twitter links
+    if (record.key === 'com.twitter') {
+      const url = formatExternalUrl(record.value, 'twitter');
+      return (
+        <a 
+          href={url} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-[#0052FF] hover:underline flex items-center gap-1"
+        >
+          {record.value} <ExternalLink size={14} />
+        </a>
+      );
+    }
+    
+    // Default formatting for other record types
+    return <span>{record.value}</span>;
+  };
+
+  // Helper function to format external URLs
+  const formatExternalUrl = (url: string, type: 'website' | 'github' | 'twitter'): string => {
+    if (!url) return '';
+    
+    // If URL already has a protocol, return it as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // Add appropriate protocol based on link type
+    if (type === 'website') {
+      return `https://${url}`;
+    } else if (type === 'github') {
+      return `https://github.com/${url}`;
+    } else if (type === 'twitter') {
+      return `https://twitter.com/${url.replace('@', '')}`;
+    }
+    
+    return url;
   };
 
   // Group records by category
