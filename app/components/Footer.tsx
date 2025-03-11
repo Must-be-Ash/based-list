@@ -16,7 +16,7 @@ export function Footer() {
               className="dark:invert"
             />
             <AnimatedShinyText className="text-sm">
-              Built by{" "}
+              Sponsored by{" "}
               <Link 
                 href="https://x.com/navigate_ai" 
                 target="_blank" 
