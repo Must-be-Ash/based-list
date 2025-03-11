@@ -265,10 +265,10 @@ export default function ENSProfileCard({ profile }: { profile: ENSProfile }) {
               </div>
               
               <div className="flex-1 text-center md:text-left z-10">
-                <h2 className="text-2xl font-bold mb-1">{profile.name}</h2>
+                <h2 className="text-2xl font-bold mb-1 text-slate-50">{profile.name}</h2>
                 
                 {descriptionRecord && (
-                  <p className="text-[#393939]/80 dark:text-[#e0e0e0]/80 mb-3">{descriptionRecord.value}</p>
+                  <p className="text-slate-100 mb-3">{descriptionRecord.value}</p>
                 )}
                 
                 {/* Display skills if available */}
