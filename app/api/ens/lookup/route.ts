@@ -160,7 +160,8 @@ export async function GET(request: NextRequest) {
           'eth.ens.delegate',
           'com.linkedin',
           'website',
-          'location'
+          'location',
+          'keywords' // Changed from 'skills' to 'keywords'
         ];
         
         const textRecords = await Promise.all(
@@ -218,12 +219,18 @@ export async function GET(request: NextRequest) {
           return record;
         });
         
+        // Process keywords specifically if they exist
+        const keywordsRecord = validRecords.find(record => record.key === 'keywords');
+        console.log('Keywords record:', keywordsRecord); // Log the found keywords record
+        const skills = keywordsRecord ? keywordsRecord.value.split(',').map((s: string) => s.trim()) : [];
+
         // Format the response
         const response = {
           name: normalizedName,
           address: ownerAddress,
           records: cleanedRecords,
           contentHash: contentHash,
+          skills: skills // Keep as 'skills' in the response for compatibility
         };
         
         // Save the profile to MongoDB and get the updated profile with local avatar
@@ -347,7 +354,8 @@ export async function GET(request: NextRequest) {
           'eth.ens.delegate',
           'com.linkedin',
           'website',
-          'location'
+          'location',
+          'keywords' // Changed from 'skills' to 'keywords'
         ];
         
         const textRecords = await Promise.all(
@@ -388,11 +396,17 @@ export async function GET(request: NextRequest) {
           return record;
         });
         
+        // Process keywords specifically if they exist
+        const keywordsRecord = validRecords.find(record => record.key === 'keywords');
+        console.log('Keywords record:', keywordsRecord); // Log the found keywords record
+        const skills = keywordsRecord ? keywordsRecord.value.split(',').map((s: string) => s.trim()) : [];
+
         // Format the response
         const response = {
           name: normalizedName,
           address: address,
           records: cleanedRecords,
+          skills: skills // Keep as 'skills' in the response for compatibility
         };
         
         return NextResponse.json(response, {
@@ -449,4 +463,4 @@ export async function GET(request: NextRequest) {
       }
     );
   }
-} 
+}

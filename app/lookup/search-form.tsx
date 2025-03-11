@@ -5,18 +5,18 @@ import { Input } from '@/app/components/ui/input';
 import { Button } from '@/app/components/ui/button';
 import { Label } from '@/app/components/ui/label';
 import { LoadingSpinner } from '@/app/components/ui/loading-spinner';
-import { Search, User } from 'lucide-react';
+import { Search, User, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface SearchFormProps {
-  onSearch: (query: string, type: 'name' | 'address') => Promise<void>;
-  onSearchChange?: (query: string, type: 'name' | 'address') => Promise<void>;
+  onSearch: (query: string, type: 'name' | 'address' | 'keyword') => Promise<void>;
+  onSearchChange?: (query: string, type: 'name' | 'address' | 'keyword') => Promise<void>;
   isSearching: boolean;
 }
 
 export default function SearchForm({ onSearch, onSearchChange, isSearching }: SearchFormProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchType, setSearchType] = useState<'name' | 'address'>('name');
+  const [searchType, setSearchType] = useState<'name' | 'address' | 'keyword'>('name');
   const [error, setError] = useState<string | null>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastQueryRef = useRef<string>('');
@@ -35,7 +35,7 @@ export default function SearchForm({ onSearch, onSearchChange, isSearching }: Se
     
     // Set a new timer
     debounceTimerRef.current = setTimeout(() => {
-      if (searchType === 'name') {
+      if (searchType === 'name' || searchType === 'keyword') {
         const normalizedQuery = searchQuery.toLowerCase();
         lastQueryRef.current = normalizedQuery;
         onSearchChange(searchQuery, searchType);
@@ -59,7 +59,7 @@ export default function SearchForm({ onSearch, onSearchChange, isSearching }: Se
     e.preventDefault();
     
     if (!searchQuery.trim()) {
-      setError('Please enter a name or address to search');
+      setError('Please enter a name, address, or keyword to search');
       return;
     }
 
@@ -131,19 +131,38 @@ export default function SearchForm({ onSearch, onSearchChange, isSearching }: Se
                 <span>Search by Address</span>
               </div>
             </button>
+            <button
+              type="button"
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                searchType === 'keyword'
+                  ? 'bg-white dark:bg-[#0052FF]/20 shadow-sm text-[#0052FF]'
+                  : 'text-[#393939] dark:text-[#e0e0e0] hover:text-[#0052FF] dark:hover:text-[#0052FF]'
+              }`}
+              onClick={() => {
+                setSearchType('keyword');
+                setError(null);
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <Tag size={16} />
+                <span>Search by Skill</span>
+              </div>
+            </button>
           </div>
         </div>
         
         <div className="space-y-2">
           <Label htmlFor="search" className="text-sm font-medium">
-            {searchType === 'name' ? 'Enter Base.eth Name' : 'Enter Ethereum Address'}
+            {searchType === 'name' ? 'Enter Base.eth Name' : searchType === 'address' ? 'Enter Ethereum Address' : 'Enter Keyword'}
           </Label>
           <div className="relative">
             <Input
               id="search"
               placeholder={searchType === 'name' 
                 ? "Enter a name (e.g., jesse, mustbeash)" 
-                : "Enter an Ethereum address (0x...)"}
+                : searchType === 'address' 
+                ? "Enter an Ethereum address (0x...)" 
+                : "Enter a keyword (e.g., JavaScript, Solidity)"}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -153,7 +172,7 @@ export default function SearchForm({ onSearch, onSearchChange, isSearching }: Se
               autoComplete="off"
             />
             <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0052FF]/60">
-              {searchType === 'name' ? <Search size={18} /> : <User size={18} />}
+              {searchType === 'name' ? <Search size={18} /> : searchType === 'address' ? <User size={18} /> : <Tag size={18} />}
             </div>
           </div>
           
@@ -198,4 +217,4 @@ export default function SearchForm({ onSearch, onSearchChange, isSearching }: Se
       </Button>
     </form>
   );
-} 
+}
