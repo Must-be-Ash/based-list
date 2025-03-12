@@ -2,9 +2,6 @@
 
 import { FC } from 'react';
 import { motion } from 'framer-motion';
-import { User } from 'lucide-react';
-import { Button } from '@/app/components/ui/button';
-import Image from 'next/image';
 
 interface SearchResultItem {
   name: string;
