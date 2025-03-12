@@ -42,7 +42,7 @@ export default function ENSProfileCard({
   profile,
   onKeywordClick,
 }: ENSProfileCardProps) {
-  const [showAllRecords, setShowAllRecords] = useState(false);
+  const [showAllRecords] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const [records, setRecords] = useState<ENSRecord[]>([]);
   const [copied, setCopied] = useState(false);
@@ -379,16 +379,6 @@ export default function ENSProfileCard({
                     </div>
                   ))}
                 </div>
-
-                {/* {records.length > 5 && (
-                  <Button 
-                    variant="outline" 
-                    className="mt-6 w-full rounded-xl border-[#0052FF]/20 hover:bg-[#f0f4ff] dark:hover:bg-[#0a1836] text-[#0052FF]"
-                    onClick={() => setShowAllRecords(!showAllRecords)}
-                  >
-                    {showAllRecords ? 'Show Less' : `Show All Records (${records.length})`}
-                  </Button>
-                )} */}
               </div>
             ) : (
               <div className="mt-6 text-center text-[#393939]/70 dark:text-[#e0e0e0]/70">

@@ -2,6 +2,7 @@
 
 import { FC } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface SearchResultItem {
   name: string;
@@ -31,7 +32,7 @@ const KeywordResultList: FC<KeywordResultListProps> = ({ results, onSelectResult
 
   return (
     <div className="mt-4">
-      <h3 className="text-lg font-semibold mb-4">Search Results for "{query}"</h3>
+      <h3 className="text-lg font-semibold mb-4">Search Results for &quot;{query}&quot;</h3>
       <div className="space-y-4">
         {results.map((result, index) => (
           <motion.div
@@ -43,7 +44,7 @@ const KeywordResultList: FC<KeywordResultListProps> = ({ results, onSelectResult
           >
             <div className="flex items-center gap-4">
               {result.avatar ? (
-                <img src={result.avatar} alt={result.displayName} className="w-12 h-12 rounded-full object-cover" />
+                <Image src={result.avatar} alt={result.displayName} className="w-12 h-12 rounded-full object-cover" />
               ) : (
                 <div className="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-white text-xl font-bold">
                   {result.displayName.charAt(0).toUpperCase()}
