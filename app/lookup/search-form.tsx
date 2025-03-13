@@ -200,8 +200,8 @@ export default function SearchForm({ onSearch, onSearchChange, isSearching }: Se
       
       <Button 
         type="submit" 
-        disabled={isSearching}
-        className="w-full h-12 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white rounded-xl"
+        disabled={isSearching || searchType === 'keyword'} // Disable button for keyword search
+        className={`w-full h-12 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white rounded-xl ${searchType === 'keyword' ? 'hidden' : ''}`} // Hide button for keyword search
       >
         {isSearching ? (
           <div className="flex items-center gap-2">
