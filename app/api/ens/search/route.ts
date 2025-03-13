@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { connectToDatabase } from '@/lib/mongodb';
 
 // Mock data for development - in a real implementation, this would be fetched from a database or indexer
 const mockBaseNames = [
@@ -40,45 +41,53 @@ const apiCallsLog: { [key: string]: number } = {};
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const query = searchParams.get('query')?.toLowerCase().trim();
-    
-    if (!query) {
+    const query = searchParams.get('query');
+    const type = searchParams.get('type');
+
+    if (!query || !type) {
       return NextResponse.json(
-        { 
-          message: 'Search query is required',
-          error: 'MISSING_QUERY',
-          details: 'Please provide a search query parameter'
-        },
+        { message: 'Invalid request parameters' },
         { status: 400 }
       );
     }
-    
-    // Log API call for debugging
-    apiCallsLog[query] = (apiCallsLog[query] || 0) + 1;
-    console.log(`ENS search request for "${query}" (call #${apiCallsLog[query]})`);
-    
-    // In a real implementation, this would query a database or indexer
-    // For now, we'll use the mock data and filter it
-    const results = mockBaseNames
-      .filter(name => name.toLowerCase().includes(query))
-      .map(name => ({
-        name,
-        // Remove the .base.eth suffix for display
-        displayName: name.replace('.base.eth', ''),
-        // In a real implementation, we would fetch these from the ENS contracts
-        // For now, we'll just provide placeholder values
-        avatar: null,
-        address: null
-      }));
-    
+
+    const { db } = await connectToDatabase();
+
+    let results = [];
+
+    if (type === 'keyword') {
+      // Search for profiles with the keyword in their skills
+      results = await db.collection('ens_profiles').find({
+        skills: { $regex: new RegExp(query, 'i') }
+      }).toArray();
+    } else {
+      // Log API call for debugging
+      apiCallsLog[query] = (apiCallsLog[query] || 0) + 1;
+      console.log(`ENS search request for "${query}" (call #${apiCallsLog[query]})`);
+
+      // In a real implementation, this would query a database or indexer
+      // For now, we'll use the mock data and filter it
+      results = mockBaseNames
+        .filter(name => name.toLowerCase().includes(query))
+        .map(name => ({
+          name,
+          // Remove the .base.eth suffix for display
+          displayName: name.replace('.base.eth', ''),
+          // In a real implementation, we would fetch these from the ENS contracts
+          // For now, we'll just provide placeholder values
+          avatar: null,
+          address: null
+        }));
+    }
+
     console.log(`Found ${results.length} results for query: ${query}`);
-    
+
     return NextResponse.json({
       query,
       results,
       count: results.length
     });
-    
+
   } catch (error) {
     console.error('Error processing ENS search:', error);
     return NextResponse.json(

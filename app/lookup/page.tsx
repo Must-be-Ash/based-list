@@ -44,7 +44,7 @@ export default function LookupPage() {
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoadingResults, setIsLoadingResults] = useState(false);
-  const [searchType, setSearchType] = useState<'name' | 'address'>('name');
+  const [searchType, setSearchType] = useState<'name' | 'address' | 'keyword'>('name');
   const router = useRouter();
   
   // Cache search results for 5 minutes
@@ -52,7 +52,7 @@ export default function LookupPage() {
   const [searchCache, setSearchCache] = useState<SearchCache>({});
 
   // Handle full search (when form is submitted)
-  const handleSearch = useCallback(async (query: string, type: 'name' | 'address') => {
+  const handleSearch = useCallback(async (query: string, type: 'name' | 'address' | 'keyword') => {
     setIsSearching(true);
     setError(null);
     setSelectedProfile(null);
@@ -85,7 +85,7 @@ export default function LookupPage() {
   }, []);
 
   // Handle real-time search (as user types)
-  const handleSearchChange = useCallback(async (query: string, type: 'name' | 'address') => {
+  const handleSearchChange = useCallback(async (query: string, type: 'name' | 'address' | 'keyword') => {
     if (!query || query.length < 2) {
       setSearchResults([]);
       setIsLoadingResults(false);
@@ -164,6 +164,12 @@ export default function LookupPage() {
     }
   }, [handleSearch]);
 
+  // Add handler for keyword clicks
+  const handleKeywordClick = useCallback((keyword: string) => {
+    setSearchQuery(keyword);
+    handleSearch(keyword, 'keyword');
+  }, [handleSearch]);
+
   return (
     <div className="container mx-auto px-4 py-28">
       <motion.div
@@ -224,7 +230,10 @@ export default function LookupPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <ENSProfileCard profile={selectedProfile} />
+              <ENSProfileCard 
+                profile={selectedProfile} 
+                onKeywordClick={handleKeywordClick} // Pass the handler here
+              />
             </motion.div>
           ) : (
             <div className="text-center my-12 text-[#393939]/70 dark:text-[#e0e0e0]/70">
@@ -236,4 +245,4 @@ export default function LookupPage() {
       </motion.div>
     </div>
   );
-} 
+}

@@ -48,7 +48,7 @@ export default function SearchResultsList({ results, onSelectResult, query }: Se
               <Button
                 variant="ghost"
                 className="w-full justify-start p-3 rounded-none text-left"
-                onClick={() => onSelectResult(result.displayName)}
+                onClick={() => onSelectResult(result.name)}
               >
                 <div className="flex items-center gap-3">
                   {result.avatar ? (
@@ -77,4 +77,4 @@ export default function SearchResultsList({ results, onSelectResult, query }: Se
       </div>
     </motion.div>
   );
-} 
+}
