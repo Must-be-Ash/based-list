@@ -37,16 +37,3 @@ next-env.d.ts
 
 # clerk configuration (can include secrets)
 /.clerk/
-
-# Node modules
-node_modules/
-
-# Environment variables
-.env
-
-# Logs
-logs/
-*.log
-
-# Bun lock file
-bun.lockb

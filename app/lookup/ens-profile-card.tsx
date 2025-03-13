@@ -42,7 +42,7 @@ export default function ENSProfileCard({
   profile,
   onKeywordClick,
 }: ENSProfileCardProps) {
-  const [showAllRecords] = useState(false);
+  const [showAllRecords, setShowAllRecords] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const [records, setRecords] = useState<ENSRecord[]>([]);
   const [copied, setCopied] = useState(false);
@@ -181,9 +181,7 @@ export default function ENSProfileCard({
   // Handle avatar display
   const renderAvatar = () => {
     if (!profile.avatar || avatarError) {
-      // Get the first two letters of the name for the avatar placeholder
       const initials = profile.name.split(".")[0].substring(0, 2).toUpperCase();
-
       return (
         <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#0052FF] to-[#0052FF]/70 flex items-center justify-center text-white text-2xl font-bold">
           {initials}
@@ -191,20 +189,12 @@ export default function ENSProfileCard({
       );
     }
 
-    // Use the avatar URL directly - it should already be the local URL from the API
     let avatarUrl = profile.avatar;
-
-    // Clean and format the avatar URL
     avatarUrl = formatIpfsUrl(avatarUrl);
 
-    console.log("Using formatted avatar URL:", avatarUrl);
-
     try {
-      // Ensure the URL is valid by creating a URL object
-      // This will throw an error if the URL is invalid
       new URL(avatarUrl);
     } catch (error) {
-      console.error("Invalid avatar URL:", avatarUrl, error);
       setAvatarError(true);
       return (
         <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#0052FF] to-[#0052FF]/70 flex items-center justify-center text-white text-2xl font-bold">
@@ -213,7 +203,6 @@ export default function ENSProfileCard({
       );
     }
 
-    // Return the image with the formatted URL
     return (
       <Image
         src={avatarUrl}

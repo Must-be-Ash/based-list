@@ -89,7 +89,7 @@ interface TextRecord {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const name = searchParams.get('name');
+    const name = searchParams.get('name') || '';
     const address = searchParams.get('address');
     const type = searchParams.get('type');
 

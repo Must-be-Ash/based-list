@@ -5,7 +5,6 @@ import { LoadingSpinner } from '@/app/components/ui/loading-spinner';
 import ENSProfileCard from './ens-profile-card';
 import SearchForm from './search-form';
 import SearchResultsList from './search-results-list';
-import KeywordResultList from './keyword-result-list';
 import { Card, CardContent } from '@/app/components/ui/card';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -212,19 +211,11 @@ export default function LookupPage() {
                   <LoadingSpinner size="sm" />
                 </div>
               ) : searchResults.length > 0 && (
-                searchType === 'keyword' ? (
-                  <KeywordResultList 
-                    results={searchResults} 
-                    onSelectResult={handleSelectResult} 
-                    query={searchQuery}
-                  />
-                ) : (
-                  <SearchResultsList 
-                    results={searchResults} 
-                    onSelectResult={handleSelectResult} 
-                    query={searchQuery}
-                  />
-                )
+                <SearchResultsList 
+                  results={searchResults} 
+                  onSelectResult={handleSelectResult} 
+                  query={searchQuery}
+                />
               )}
             </CardContent>
           </Card>
