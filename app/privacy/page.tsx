@@ -1,4 +1,4 @@
-import Link from "next/link"
+// import Link from "next/link"
 
 export default function PrivacyPolicy() {
   return (
@@ -44,18 +44,7 @@ export default function PrivacyPolicy() {
           <p>We implement appropriate security measures to protect your personal information. However, no method of transmission over the Internet is 100% secure.</p>
         </section>
 
-        <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">5. Contact Us</h2>
-          <p>If you have any questions about this Privacy Policy, please contact us at:</p>
-          <Link 
-            href="https://x.com/navigate_ai" 
-            target="_blank"
-            rel="noopener noreferrer" 
-            className="text-[#0052FF] hover:text-[#0052FF]/80"
-          >
-            @navigate_ai
-          </Link>
-        </section>
+       
       </div>
     </div>
   )

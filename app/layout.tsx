@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     title: "Based List",
     description: "A directory of people building on Base",
     images: ["/og-image.png"],
-    creator: "@navigate_ai",
+    creator: "@must_be_ash",
   },
 }
 

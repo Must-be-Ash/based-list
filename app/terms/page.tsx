@@ -1,4 +1,4 @@
-import Link from "next/link"
+// import Link from "next/link"
 
 export default function TermsOfService() {
   return (
@@ -44,18 +44,7 @@ export default function TermsOfService() {
           <p>Based List is provided &ldquo;as is&rdquo; without warranties of any kind. We are not liable for any damages arising from your use of the service.</p>
         </section>
 
-        <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">6. Contact</h2>
-          <p>For any questions regarding these terms, please contact us at:</p>
-          <Link 
-            href="https://x.com/navigate_ai" 
-            target="_blank"
-            rel="noopener noreferrer" 
-            className="text-[#0052FF] hover:text-[#0052FF]/80"
-          >
-            @navigate_ai
-          </Link>
-        </section>
+       
       </div>
     </div>
   )
